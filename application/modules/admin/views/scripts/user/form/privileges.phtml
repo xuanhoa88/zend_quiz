@@ -1,0 +1,29 @@
+<div class="col-lg-12">
+	<h4 class="control-label">
+		<?php echo $this->translate('RoleForm:@Privileges'); ?>
+		<div class="pull-right">
+			<span class="btn btn-default">
+				<label class="checkbox-inline"><input type="checkbox" data-toggle="checkAll" /><?php echo $this->translate('RoleForm:@Check all'); ?></label>
+			</span>
+		</div>
+	</h4>
+</div>
+
+<div class="col-lg-12">
+	<div class="row">
+		<div class="form-group">
+		<?php foreach ($this->element->getSubForm('dependencyPrivileges') as $subForm) : ?>
+			<?php foreach ($subForm->getElements() as $formElement) : ?>
+			<div class="col-lg-3">	
+				<div class="input-group">
+					<label class="checkbox-inline">
+				    	<?php echo $formElement, $formElement->getLabel(); ?>
+			        </label>
+				</div>
+			</div>
+			<?php endforeach; ?>
+		<?php endforeach; ?>
+			<div class="clearfix"></div>
+		</div>
+	</div>
+</div>

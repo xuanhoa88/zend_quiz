@@ -1,0 +1,25 @@
+<!-- Toolbar -->
+<div class="pull-left">
+	<button type="button" class="btn btn-default" onclick="LumiaJS.dataTable.redirect('<?php echo $this->escape($this->baseUrl('admin/department')); ?>');">
+		<span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span> <?php echo $this->translate('PageHeader:@Manage departments'); ?>
+	</button>
+</div>
+	
+<div class="pull-right">
+		
+	<button type="button" class="btn btn-success" onclick="LumiaJS.dataTable.redirect('<?php echo $this->escape($this->baseUrl('admin/subject/add/department/' . $this->departmentRow->department_id)); ?>');">
+		<span class="glyphicon glyphicon-plus"></span> <?php echo $this->translate('ListView:@Add new'); ?>
+	</button>
+	
+	<button type="button" class="btn btn-danger" onclick="LumiaJS.dataTable.get('<?php echo $this->escape($this->dataGrid()->name); ?>').performAction('<?php echo $this->escape($this->baseUrl('admin/department/delete-via-selected/mode/subject')); ?>');">
+		<span class="glyphicon glyphicon-trash"></span> <?php echo $this->translate('ListView:@Delete selected row(s)'); ?>
+	</button>
+		
+</div>
+
+<div class="clearfix"></div>
+<!-- /Toolbar -->
+
+<!-- Table -->
+<?php echo $this->render('datagrid/table.phtml'); ?>
+<!-- /Table -->

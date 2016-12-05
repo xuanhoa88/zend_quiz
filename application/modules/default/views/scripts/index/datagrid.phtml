@@ -1,0 +1,185 @@
+<?php if ($this->dataGrid()->dataSource->count() > 0) : ?>
+	<div class="row">
+	<?php foreach($this->dataGrid()->dataSource as $_row) : ?>
+		<?php
+			// Get columns 
+			$columns = $this->dataGrid()->columns;
+			
+			// Prepare data source for the columns
+			$_row = is_callable(array($_row, 'toArray')) ? $_row->toArray() : (array) $_row;
+            $columns->setData(is_callable(array($_row, 'toArray')) ? $_row->toArray() : (array) $_row);
+            
+            // Prepare data for column named 'gridAction'
+            $columns['gridAction']->getBody()->render();
+            $gridActionView = $columns['gridAction']->getBody()->getView();
+        
+            // This exam was invalid
+            if ($gridActionView->examInvalid) continue;
+			
+			// Encrypt exam id
+			$encryptExamId = $this->HashID()->encrypt($gridActionView->exam_id);
+		?>
+		<div class="col-md-6">
+		<?php if ($gridActionView->exam_student_executed) : ?>
+			<div class="panel panel-success">
+		<?php else : ?>
+			<div class="panel panel-default">
+		<?php endif ; ?>
+			
+				<div class="panel-heading">
+					<h2><?php echo $columns['exam_code']->getHeader() ?> <button type="button" class="btn btn-default pb-button btn-lg pull-right"><?php echo $columns['exam_code']->getBody()->getValue(); ?></button></h2>
+				</div>
+				
+                <div class="table-responsive">
+                        <table class="table table-striped">
+                        
+                        	<thead>
+                        	
+                            	<tr>
+                                    <td width="50%"><strong><?php echo $columns['subject_name']->getHeader(); ?></strong></td>
+                                    <td class="text-right"><?php echo $columns['subject_name']->getBody()->getValue(); ?></td>
+                                </tr>
+                                
+                            </thead>
+                            
+                            <tbody>
+                            	<tr>
+                                    <td><strong><?php echo $columns['exam_management_start_time']->getHeader(); ?></strong></td>
+                                    <td class="text-right"><?php echo $gridActionView->startTime; ?></td>
+                                </tr>
+                                <?php if ($gridActionView->involvedTime) : ?>
+                                <tr>
+                                    <td><strong><?php echo $this->translate('ExamListView:@Involved time'); ?></strong></td>
+                                    <td class="text-right"><?php echo $gridActionView->involvedTime; ?></td>
+                                </tr>
+                                <?php endif; ?>
+                            	<?php if ($gridActionView->exam_student_executed) : ?>
+                                <tr>
+                                    <td><strong><?php echo $this->translate('ExamListView:@Time to spent'); ?></strong></td>
+                                    <td class="text-right"><?php echo $this->translate('ExamListView:@%d minute(s) %d second(s)', $gridActionView->spentTime); ?></td>
+                                </tr>
+                                <?php endif; ?>
+                                <tr>
+                                    <td><strong><?php echo $this->translate('ExamListView:@Expired time'); ?></strong></td>
+                                    <td class="text-right"><?php echo $gridActionView->expiredTime; ?></td>
+                                </tr>
+                            	
+                            </tbody>
+                            
+                            <tfoot>
+                            
+                            	<tr>
+                                    <td colspan="2" class="text-center">
+                                    <?php if ($gridActionView->exam_student_executed) : ?>
+											<a href="<?php echo $this->baseUrl('/quiz/result/exam-id/' . $encryptExamId); ?>" class="btn btn-default btn-lg btn-success"><?php echo $this->translate('ExamListView:@View result'); ?></a>
+									<?php else : ?>
+										<?php if ($gridActionView->allowedParticipate) : ?>
+											<?php if ($gridActionView->involvedTime) : ?>
+											<div id="exam-countdown-continue-<?php echo md5($encryptExamId); ?>">
+												<button type="button" class="btn btn-default btn-lg btn-alert">
+													<span class="secondsLeft"></span>
+												</button>
+												<a href="<?php echo $this->baseUrl('/quiz/exam/id/' . $encryptExamId); ?>" class="btn btn-primary btn-lg"><?php echo $this->translate('ExamListView:@Continue'); ?></a>
+											</div>
+											<?php else : ?>
+											<a href="<?php echo $this->baseUrl('/quiz/exam/id/' . $encryptExamId); ?>" class="btn btn-primary btn-lg"><?php echo $this->translate('ExamListView:@Do an exam'); ?></a>
+											<?php endif; ?>
+										<?php else : ?>
+											<?php if ($gridActionView->fewerTimeAllowed) : ?>
+												<button id="exam-countdown-start-<?php echo md5($encryptExamId); ?>" type="button" class="btn btn-default btn-lg btn-warning">
+												<span class="secondsLeft"><?php echo $this->translate('ExamListView:@The exam is temporarily unavailable'); ?></span>
+												</button>
+											<?php 
+												endif; 
+												if ($gridActionView->overTimeAllowed) : 
+											?>
+												<button type="button" class="btn btn-default btn-lg btn-danger"><?php echo $this->translate('ExamListView:@The exam was locked'); ?></button>
+											<?php endif; ?>
+										<?php endif; ?>
+									<?php endif ; ?>
+                                    </td>
+                                </tr>
+                                
+                            </tfoot>
+                            
+                        </table>
+                    
+                </div>
+			
+			</div>
+		</div>
+		
+		<?php if (!$gridActionView->exam_student_executed) : ?>
+		<script type="text/javascript">
+		jQuery(function() {
+			<?php if ($gridActionView->fewerTimeAllowed) : ?>
+			// Init countdown timer
+			jQuery('#exam-countdown-start-<?php echo md5($encryptExamId); ?>').countdown({
+				'fromDate': new Date('<?php echo str_replace('-', '/', $gridActionView->jsCountDown['currentTime']); ?>'),
+				'toDate': new Date('<?php echo str_replace('-', '/', $gridActionView->jsCountDown['startTime']); ?>')
+			}, function(event) {
+				var $this = jQuery(this);
+				switch (event.type) {
+					case 'secondsLeft':
+						var $type = $this.find('span.' + event.type);
+						if ($type.length > 0) {
+							if (event.value > 0) {
+								var numberOfMinutes = Math.floor(event.value/60);
+								var numberOfSeconds = event.value - numberOfMinutes * 60;
+								$type.html(LumiaJS.i18n.translate('ExamListView:@You may be able to do the exam within %d minute(s) %d second(s)', [numberOfMinutes, numberOfSeconds]));
+							} else {
+								$this.removeClass('btn-warning').addClass('btn-primary').html('<?php echo $this->translate('ExamListView:@Do an exam'); ?>');
+								$this.unbind('click').bind('click', function() {
+									window.location.href = '<?php echo $this->baseUrl('/quiz/exam/id/' . $encryptExamId); ?>';
+								});
+							}
+						}
+						break;
+				}
+			});
+			<?php endif; ?>
+
+			<?php if ($gridActionView->allowedParticipate) : ?>
+			// Init countdown timer
+			jQuery('#exam-countdown-continue-<?php echo md5($encryptExamId); ?>').countdown({
+				'fromDate': new Date('<?php echo str_replace('-', '/', $gridActionView->jsCountDown['currentTime']); ?>'),
+				'toDate': new Date('<?php echo str_replace('-', '/', $gridActionView->jsCountDown['expiredTime']); ?>')
+			}, function(event) {
+				var $this = jQuery(this);
+				switch (event.type) {
+					case 'secondsLeft':
+						var $type = $this.find('span.' + event.type);
+						if ($type.length > 0) {
+							if (event.value > 0) {
+								var numberOfMinutes = Math.floor(event.value/60);
+								var numberOfSeconds = event.value - numberOfMinutes * 60;
+								$type.html(LumiaJS.i18n.translate('ExamListView:@You have %d minute(s) %d second(s) to complete the exam', [numberOfMinutes, numberOfSeconds]));
+							} else {
+
+								// Add css spin
+								$this.html('<span class="spinner"><i class="fa fa-refresh fa-spin"></i></span>');
+
+								// Auto finish the exam
+								LumiaJS.ajaxRequest(window.location.base + '/quiz/finish', {'exam-id': '<?php echo $encryptExamId; ?>'}, {'type': 'POST'})
+						      	.always(function() {
+						      		$this.html('<button type="button" class="btn btn-default btn-lg btn-danger">' + LumiaJS.i18n.translate('ExamListView:@The exam was locked') + '</button>');
+						        });
+							}
+						}
+						break;
+				}
+			});
+			<?php endif; ?>
+		
+		});
+		</script>
+		<?php endif; ?>
+
+	<?php endforeach; ?>
+	</div>
+	<!-- Paginator -->
+	<?php echo $this->paginationControl($this->dataGrid()->dataSource, $this->dataGrid()->paginator->getType(), $this->dataGrid()->paginator->getViewScript()); ?>
+	<!-- /Paginator -->
+<?php else : ?>
+<div class="row"><div class="col-md-12"><?php echo $this->translate('DataTable:@No record found'); ?></div></div>
+<?php endif; ?>

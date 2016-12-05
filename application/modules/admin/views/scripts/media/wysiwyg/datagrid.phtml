@@ -1,0 +1,93 @@
+<!-- Settings -->
+<?php 
+	$this->dataGrid()->paginator->setViewScript('media/wysiwyg/pagination.phtml');
+?>
+
+<!-- Toolbar -->
+<div class="row">
+	<div class="col-lg-12">
+		
+		<div class="pull-left">
+		
+			<button type="button" class="btn btn-success" onclick="LumiaJS.admin.media.wysiwyg.upload();">
+				<span class="glyphicon glyphicon-plus"></span> <?php echo $this->translate('ListView:@Add new'); ?>
+			</button>
+			
+		</div>
+		
+	</div>
+	
+</div>
+<!-- ./Toolbar -->
+
+<!-- Table -->
+<?php echo $this->render('media/wysiwyg/table.phtml'); ?>
+<!-- ./Table -->
+
+<!-- Paginator -->
+<?php echo $this->paginationControl($this->dataGrid()->dataSource, $this->dataGrid()->paginator->getType(), $this->dataGrid()->paginator->getViewScript()); ?>
+<!-- ./Paginator -->
+
+<script type="text/javascript">
+	jQuery(function(){
+		
+		jQuery.isPlainObject(LumiaJS.admin.media.wysiwyg) || (LumiaJS.admin.media.wysiwyg = {}); 
+
+		/**
+		* Add new media file
+		*/
+		LumiaJS.admin.media.wysiwyg.upload = function() {
+			var $dialogItself;
+			
+			// Bind event when all files in the queue have been processed
+			LumiaJS.uploadify.overrides.onQueueComplete = function(file) {
+				$dialogItself.close();
+				LumiaJS.dataTable.get('<?php echo $this->escape($this->dataGrid()->name); ?>').loadPage('<?php echo $this->url(array(
+					'__fromWysiwyg' => 'summernote',
+					'fileTypeExts' => $this->dataGrid()->view->fileTypeExts
+				)); ?>');
+			};
+
+			// Get upload page
+			LumiaJS.admin.media.add({
+				'data': {
+					'requestParams': {
+						'reloadPage': 0,
+						'fileTypeExts': '<?php echo $this->dataGrid()->view->fileTypeExts; ?>'
+					},
+					'messageCallback': function(dialogItself) {
+						$dialogItself = dialogItself;
+					}
+				}
+			});
+		};
+
+		/**
+		* Remove media file
+		*/
+		LumiaJS.admin.media.wysiwyg.remove = function($id) {
+			<?php if ($this->dataGrid()->dataSource->count()) : ?>
+			LumiaJS.dataTable.get('<?php echo $this->escape($this->dataGrid()->name); ?>').performAction('<?php echo $this->escape($this->baseUrl('admin/media/delete/')); ?>', 
+			{ 
+				'data': {
+	                'callback' : function() {
+	                	return {
+	                    	'id': $id,
+	                        'reloadPage': 0,
+	                        'fileTypeExts': '<?php echo $this->dataGrid()->view->fileTypeExts; ?>'
+	                    }
+	                },
+	                'deferred': function(dialogItself, xhr) {
+	                	xhr.then(function() {
+	                		LumiaJS.dataTable.get('<?php echo $this->escape($this->dataGrid()->name); ?>').loadPage('<?php echo $this->url(array(
+								'__fromWysiwyg' => 'summernote',
+	                			'fileTypeExts' => $this->dataGrid()->view->fileTypeExts
+	                		)); ?>');
+	                    });
+	                } 
+	            }
+			});
+			<?php endif; ?>
+		};
+	});
+</script>

@@ -1,0 +1,79 @@
+<form name="<?php echo $this->element->getName(); ?>" action="<?php echo $this->element->getAction(); ?>" method="<?php echo $this->element->getMethod(); ?>">
+	<?php echo $this->element->getElement('class_id'); ?>
+	
+	<div class="row">
+		
+		<div class="col-lg-6">
+		
+		    <div class="form-group<?php echo ($this->element->getElement('class_name')->hasErrors() ? ' has-error' : ''); ?>">
+				<label class="control-label"><?php echo $this->element->getElement('class_name')->getLabel(); ?></label> 
+				<div class="input-group">
+					<span class="input-group-addon"><i class="fa fa-caret-right icon-mandatory"></i></span>
+					<?php echo $this->element->getElement('class_name')->setAttribs(array('class' => 'form-control')); ?>
+				</div>
+				<?php echo $this->formErrors($this->element->getElement('class_name')->getMessages()); ?>
+			</div>
+			
+			<div class="form-group<?php echo ($this->element->getElement('class_code')->hasErrors() ? ' has-error' : ''); ?>">	 
+				<label class="control-label"><?php echo $this->element->getElement('class_code')->getLabel(); ?></label> 
+				<div class="input-group">
+					<span class="input-group-addon"><i class="fa fa-caret-right icon-mandatory"></i></span>
+					<?php echo $this->element->getElement('class_code')->setAttribs(array('class' => 'form-control')); ?>
+				</div>
+				<?php echo $this->formErrors($this->element->getElement('class_code')->getMessages()); ?>
+			</div>
+			
+			<div class="form-group<?php echo ($this->element->getElement('class_status')->hasErrors() ? ' has-error' : ''); ?>">	
+				<label class="control-label"><?php echo $this->element->getElement('class_status')->getLabel(); ?></label>
+				<div class="input-group">
+					<?php echo $this->element->getElement('class_status')->setOptions(array('label_class' => array('class' => 'radio-inline')))->setSeparator('&nbsp;'); ?>
+				</div>
+				<?php echo $this->formErrors($this->element->getElement('class_status')->getMessages()); ?>
+			</div>
+			
+		</div>
+		
+		<div class="col-lg-6">
+			
+			<div class="form-group<?php echo ($this->element->getElement('class_period')->hasErrors() ? ' has-error' : ''); ?>">
+				<label class="control-label"><?php echo $this->element->getElement('class_period')->getLabel(); ?></label>
+				<div class="row">
+					<?php 
+						$this->element->getElement('class_period')->getDecorator('Period')->setOption('attrs', array(
+							'begin' => array('placeholder' => $this->translate('ClassForm:@Time begin')),
+        					'end' => array('placeholder' => $this->translate('ClassForm:@Time end'))
+						));
+					?>
+					<?php echo $this->element->getElement('class_period')->setTemplate('<div class="col-xs-6"><div class="input-group"><span class="input-group-addon"><i class="fa fa-caret-right icon-mandatory"></i></span>%input%</div></div>')->setAttrib('class', 'form-control'); ?>
+				</div>
+				<?php echo $this->formErrors($this->element->getElement('class_period')->getMessages()); ?>
+			</div>
+			
+			<div class="form-group<?php echo ($this->element->getElement('class_teacher')->hasErrors() ? ' has-error' : ''); ?>">	
+				<label class="control-label"><?php echo $this->element->getElement('class_teacher')->getLabel(); ?></label>
+				<div class="input-group">
+					<span class="input-group-addon"><i class="fa fa-caret-right icon-mandatory"></i></span>
+					<?php echo $this->element->getElement('class_teacher')->setAttribs(array('class' => 'form-control')); ?> 
+				</div>
+				<?php echo $this->formErrors($this->element->getElement('class_teacher')->getMessages()); ?>
+			</div>
+			
+			<div class="form-group<?php echo ($this->element->getElement('class_department')->hasErrors() ? ' has-error' : ''); ?>">	
+				<label class="control-label"><?php echo $this->element->getElement('class_department')->getLabel(); ?></label>
+				<div class="input-group">
+					<span class="input-group-addon"><i class="fa fa-caret-right icon-mandatory"></i></span>
+					<?php echo $this->element->getElement('class_department')->setAttribs(array('class' => 'form-control')); ?> 
+				</div>
+				<?php echo $this->formErrors($this->element->getElement('class_department')->getMessages()); ?>
+			</div>
+				
+		</div>
+			
+	</div>
+
+	<div class="btn-toolbar">
+		<?php echo $this->element->getElement('btnSave')->setAttribs(array('class' => 'btn btn-lg btn-primary')); ?>
+		<?php echo $this->element->getElement('btnReset')->setAttribs(array('class' => 'btn btn-lg btn-danger')); ?>
+	</div>
+	
+</form>

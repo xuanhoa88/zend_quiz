@@ -1,0 +1,22 @@
+<?php if (!empty($this->element->getView()->classesRows)) : ?>
+
+	<div class="form-group">
+		<label class="control-label"><?php echo $this->translate('ExamForm:@List of classes'); ?></label>
+		<fieldset>
+			<?php foreach ($this->element->getView()->classesRows as $classesRow) : ?>
+			<div class="col-lg-6">
+				<div class="form-group">
+				   <label class="checkbox-inline">
+				   		<?php echo $this->element->getSubForm('dependencyClasses')->getSubForm($classesRow->class_id)->getElement($classesRow->class_id); ?>
+				   		<?php echo $classesRow->class_name; ?>
+				   </label>
+				   
+				   <?php echo $this->element->getSubForm('dependencyClasses')->getSubForm($classesRow->class_id)->getElement('btnViewStudents' . $classesRow->class_id)->setAttribs(array('class' => 'btn btn-success btn-sm pull-right')); ?>
+				 </div>
+			</div>
+			<?php endforeach; ?>
+		</fieldset>
+		
+	</div>
+	
+<?php endif; ?>

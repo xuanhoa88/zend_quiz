@@ -1,0 +1,92 @@
+<?php if (!empty($this->element->getView()->chapterRows)) : ?>
+<fieldset>
+	<table class="table table-bordered dataTable">
+	    <thead>
+	    
+		<?php if (!empty($this->element->getView()->questionLevelRows)) : ?>
+	    		<tr>
+	    			<th rowspan="2" valign="middle"><i class="fa fa-list"></i> <?php echo $this->translate('ExamForm:@List of chapters'); ?></th>
+		    		<?php foreach ($this->element->getView()->questionLevelRows as $questionLevelRow) : ?>
+			            <th colspan="2" class="text-center"><?php echo $this->translate($questionLevelRow->question_level_name); ?></th>
+		        	<?php endforeach; ?>
+		        </tr>
+		
+		        <tr>
+		        <?php foreach ($this->element->getView()->questionLevelRows as $questionLevelRow) : ?>
+		        	<?php if (!empty($this->element->getView()->questionTypeRows)) : ?>
+		        	
+			        	<?php foreach ($this->element->getView()->questionTypeRows as $questionTypeRow) : ?>
+				            <th class="text-center"><?php echo $questionTypeRow['TEXT']; ?></th>
+			        	<?php endforeach; ?>
+		        	
+		        	<?php endif; ?>
+		        <?php endforeach; ?>
+		        </tr>
+	    		
+		<?php endif; ?>
+	        
+	    </thead>
+	    
+	    <tfoot>
+	    <?php if (!empty($this->element->getView()->questionLevelRows)) : ?>
+			<tr>
+				<td><i class="fa fa-download"></i> <?php echo $this->translate('ExamForm:@Number of input questions'); ?></td>
+	        <?php foreach ($this->element->getView()->questionLevelRows as $questionLevelRow) : ?>
+	        	<?php if (!empty($this->element->getView()->questionTypeRows)) : ?>
+	        	
+		        	<?php foreach ($this->element->getView()->questionTypeRows as $questionTypeRow) : ?>
+			            <td class="text-center">
+			            	<div class="btn btn-default btn-block" id="<?php echo $questionLevelRow->question_level_code . '-' . $questionTypeRow['KEY'] . '-number-input-questions'; ?>"><?php echo (isset($this->element->getView()->calcNumberInputQuestions[$questionLevelRow->question_level_code][$questionTypeRow['KEY']]) ? $this->element->getView()->calcNumberInputQuestions[$questionLevelRow->question_level_code][$questionTypeRow['KEY']] : 0); ?></div>
+			            </td>
+		        	<?php endforeach; ?>
+	        	
+	        	<?php endif; ?>
+	        <?php endforeach; ?>
+	        </tr>
+	        
+	        <tr>
+				<td><i class="fa fa-database"></i> <?php echo $this->translate('ExamForm:@Number of valid questions'); ?></td>
+	        <?php foreach ($this->element->getView()->questionLevelRows as $questionLevelRow) : ?>
+	        	<?php if (!empty($this->element->getView()->questionTypeRows)) : ?>
+	        	
+		        	<?php foreach ($this->element->getView()->questionTypeRows as $questionTypeRow) : ?>
+			            <td class="text-center">
+			            	<div class="btn btn-default btn-block" id="<?php echo $questionLevelRow->question_level_code . '-' . $questionTypeRow['KEY'] . '-number-valid-questions'; ?>"><?php echo (isset($this->element->getView()->calcNumberValidQuestions[$questionLevelRow->question_level_code][$questionTypeRow['KEY']]) ? $this->element->getView()->calcNumberValidQuestions[$questionLevelRow->question_level_code][$questionTypeRow['KEY']] : 0); ?></div>
+			            </td>
+		        	<?php endforeach; ?>
+	        	
+	        	<?php endif; ?>
+	        <?php endforeach; ?>
+	        </tr>
+		<?php endif; ?>
+		</tfoot>
+		
+	    <tbody>
+		    <?php 
+	    		foreach ($this->element->getView()->chapterRows as $chapterRow) : 
+					if (!empty($this->element->getView()->questionLevelRows)) : 
+			?>
+						<tr>
+							<td><?php echo $chapterRow->chapter_name; ?></td>
+		        	<?php 
+		        		foreach ($this->element->getView()->questionLevelRows as $questionLevelRow) : 
+		        			if (!empty($this->element->getView()->questionTypeRows)) :
+		        				$questionLevelForm = $this->element->getSubForm('dependencyQuestions')->getSubForm($chapterRow->chapter_id . $questionLevelRow->question_level_code);
+					        	foreach ($this->element->getView()->questionTypeRows as $questionTypeRow) : 
+					    ?>
+				        	<td><?php echo $questionLevelForm->getElement($questionTypeRow['KEY'])->setAttribs(array('class' => 'form-control text-center')); ?></td>
+						<?php 
+						        endforeach; 
+						 	endif; 			        	
+		        		endforeach; 
+		        	?>
+				        </tr>
+			<?php 
+					endif;
+				endforeach; 
+	        ?>
+		</tbody>
+		
+	</table>
+</fieldset>
+<?php endif; ?>

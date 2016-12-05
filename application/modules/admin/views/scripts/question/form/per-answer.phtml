@@ -1,0 +1,22 @@
+<div class="form-group<?php echo ($this->formElement->getElement('answer_content')->hasErrors() ? ' has-error' : ''); ?>" id="answer-form-<?php echo $this->formElement->getName(); ?>">	
+		
+	<div class="row">
+		<div class="col-xs-8 col-sm-6"><label class="control-label control-label-<?php echo $this->formElement->getElement('answer_content')->getName(); ?>"><?php echo $this->formElement->getElement('answer_content')->getLabel(); ?></label></div>
+      	<div class="col-xs-4 col-sm-6"><?php echo $this->formElement->getElement('btnRemovePerAnswer')->setAttribs(array('class' => 'btn btn-warning btn-sm pull-right')); ?></div>
+    </div>
+      	
+	<div class="input-group">
+		<span class="input-group-addon"><i class="fa fa-caret-right icon-mandatory"></i></span>
+		<?php echo $this->formElement->getElement('answer_content')->setAttribs(array('class' => 'form-control', 'rows' => '5')); ?>
+	</div>
+
+	<?php echo $this->formErrors($this->formElement->getElement('answer_content')->getMessages()); ?>
+	
+	<div class="input-group">
+		<label class="checkbox-inline">
+	    	<?php echo $this->formElement->getElement('answer_is_correct'); ?>
+        	<?php echo $this->formElement->getElement('answer_is_correct')->getLabel(); ?>
+        </label>
+	</div>
+				
+</div>

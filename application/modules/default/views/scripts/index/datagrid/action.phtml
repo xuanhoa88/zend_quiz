@@ -1,0 +1,8 @@
+<?php if ($this->exam_student_executed) : ?>
+	<button class="btn btn-default btn-success" type="button"><?php echo $this->translate('ExamListView:@Exam has been completed'); ?></button>
+	<a href="<?php echo $this->baseUrl('/quiz/result/exam-id/' . $this->HashID()->encrypt($this->exam_id)); ?>"><button class="btn btn-default btn-warning" type="button"><?php echo $this->translate('ExamListView:@View result'); ?></button></a>
+<?php else: ?>
+	<?php if ($this->allowedParticipate) : ?>
+		<a href="<?php echo $this->baseUrl('/quiz/exam/id/' . $this->HashID()->encrypt($this->exam_id)); ?>"><button class="btn btn-default btn-primary" type="button"><?php echo $this->translate('ExamListView:@Join immediately'); ?></button></a>
+	<?php endif; ?>
+<?php endif; ?>

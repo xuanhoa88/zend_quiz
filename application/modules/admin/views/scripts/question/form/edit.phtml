@@ -1,0 +1,70 @@
+<form name="<?php echo $this->element->getName(); ?>" action="<?php echo $this->element->getAction(); ?>" method="<?php echo $this->element->getMethod(); ?>">
+	<?php echo $this->element->getElement('question_id'); ?>
+	
+	<div class="row">
+		
+		<div class="col-lg-6">
+		
+			<div class="form-group<?php echo ($this->element->getElement('question_subject')->hasErrors() ? ' has-error' : ''); ?>">	 
+				<label class="control-label"><?php echo $this->element->getElement('question_subject')->getLabel(); ?></label> 
+				<div class="input-group">
+					<span class="input-group-addon"><i class="fa fa-caret-right icon-mandatory"></i></span>
+					<?php echo $this->element->getElement('question_subject')->setAttribs(array('class' => 'form-control')); ?>
+				</div>
+				<?php echo $this->formErrors($this->element->getElement('question_subject')->getMessages()); ?>
+			</div>
+			
+			<div class="form-group<?php echo ($this->element->getElement('question_chapter')->hasErrors() ? ' has-error' : ''); ?>">	 
+				<label class="control-label"><?php echo $this->element->getElement('question_chapter')->getLabel(); ?></label> 
+				<div class="input-group">
+					<span class="input-group-addon"><i class="fa fa-caret-right icon-mandatory"></i></span>
+					<?php echo $this->element->getElement('question_chapter')->setAttribs(array('class' => 'form-control')); ?>
+				</div>
+				<?php echo $this->formErrors($this->element->getElement('question_chapter')->getMessages()); ?>
+			</div>
+			
+		</div>
+		
+		<div class="col-lg-6">
+			
+			<div class="form-group<?php echo ($this->element->getElement('question_level')->hasErrors() ? ' has-error' : ''); ?>">	
+				<label class="control-label"><?php echo $this->element->getElement('question_level')->getLabel(); ?></label>
+				<div class="input-group">
+					<?php echo $this->element->getElement('question_level')->setOptions(array('label_class' => array('class' => 'radio-inline')))->setSeparator('&nbsp;'); ?>
+				</div>
+				<?php echo $this->formErrors($this->element->getElement('question_level')->getMessages()); ?>
+			</div>
+			
+			<div class="form-group<?php echo ($this->element->getElement('question_status')->hasErrors() ? ' has-error' : ''); ?>">	
+				<label class="control-label"><?php echo $this->element->getElement('question_status')->getLabel(); ?></label>
+				<div class="input-group">
+					<?php echo $this->element->getElement('question_status')->setOptions(array('label_class' => array('class' => 'radio-inline')))->setSeparator('&nbsp;'); ?>
+				</div>
+				<?php echo $this->formErrors($this->element->getElement('question_status')->getMessages()); ?>
+			</div>
+				
+		</div>
+		
+		<div class="col-lg-12">
+		
+			<div class="form-group<?php echo ($this->element->getElement('question_content')->hasErrors() ? ' has-error' : ''); ?>">
+				<label class="control-label"><?php echo $this->element->getElement('question_content')->getLabel(); ?></label> 
+				<div class="input-group">
+					<span class="input-group-addon"><i class="fa fa-caret-right icon-mandatory"></i></span>
+					<?php echo $this->element->getElement('question_content')->setAttribs(array('class' => 'form-control', 'rows' => '10')); ?>
+				</div>
+				<?php echo $this->formErrors($this->element->getElement('question_content')->getMessages()); ?>
+			</div>
+			
+    		<?php echo $this->render('form/list-answers.phtml'); ?>
+    			
+		</div>
+		
+	</div>
+
+	<div class="btn-toolbar">
+		<?php echo $this->element->getElement('btnSave')->setAttribs(array('class' => 'btn btn-lg btn-primary')); ?>
+		<?php echo $this->element->getElement('btnReset')->setAttribs(array('class' => 'btn btn-lg btn-danger')); ?>
+	</div>
+	
+</form>

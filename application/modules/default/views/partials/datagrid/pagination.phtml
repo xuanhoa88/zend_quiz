@@ -1,0 +1,39 @@
+<?php if ($this->pageCount) : ?>
+	<div class="row">
+	
+		<div class="col-sm-12 text-center">
+		  <ul class="pagination pagination-lg">
+		    <?php if (isset($this->previous)) : ?>
+		    <li class="prev"><a href="javascript:void(0)" onclick="LumiaJS.dataTable.get('<?php echo $this->escape($this->dataGrid()->name); ?>').loadPage('<?php echo $this->url(array('page' => $this->first)); ?>')"><?php echo $this->translate('Paginator:@First'); ?></a></li>
+		    <?php else: ?>
+		    <li class="prev disabled"><a href="javascript:void(0)"><?php echo $this->translate('Paginator:@First'); ?></a></li>
+		    <?php endif; ?>
+		    
+		    <?php if (isset($this->previous)) : ?>
+		    <li><a href="javascript:void(0)" onlick="LumiaJS.dataTable.get('<?php echo $this->escape($this->dataGrid()->name); ?>').loadPage('<?php echo $this->url(array('page' => $this->previous)); ?>')">&larr; <?php echo $this->translate('Paginator:@Previous'); ?></a></li>
+		    <?php else: ?>
+		    <li class="prev disabled"><a href="javascript:void(0)"><?php echo $this->translate('Paginator:@Previous'); ?></a></li>
+		    <?php endif; ?>
+		    
+		    <?php foreach ($this->pagesInRange as $page) : ?>
+		    <li <?php if ($page == $this->current) : ?>class="active"<?php endif; ?>><a href="javascript:LumiaJS.dataTable.get('<?php echo $this->escape($this->dataGrid()->name); ?>').loadPage('<?php echo $this->url(array('page' => $page)); ?>')"><?php echo $page; ?></a></li> 
+		    <?php endforeach; ?>
+		    
+		    <?php if (isset($this->next)) : ?>
+		    <li class="next"><a href="javascript:void(0)" onclick="LumiaJS.dataTable.get('<?php echo $this->escape($this->dataGrid()->name); ?>').loadPage('<?php echo $this->url(array('page' => $this->next)); ?>')"><?php echo $this->translate('Paginator:@Next'); ?> &rarr;</a></li>
+		    <?php else: ?>
+		    <li class="next disabled"><a href="javascript:void(0)"><?php echo $this->translate('Paginator:@Next'); ?></a></li>
+		    <?php endif; ?>
+		    
+		    <?php if (isset($this->next)) : ?>
+		    <li class="next"><a href="javascript:void(0)" onclick="LumiaJS.dataTable.get('<?php echo $this->escape($this->dataGrid()->name); ?>').loadPage('<?php echo $this->url(array('page' => $this->last)); ?>')"><?php echo $this->translate('Paginator:@Last'); ?></a></li>
+		    <?php else: ?>
+		    <li class="next disabled"><a href="javascript:void(0)"><?php echo $this->translate('Paginator:@Last'); ?></a></li>
+		    <?php endif; ?>
+		  </ul>
+		  
+	  	  <div><?php echo $this->translate('Paginator:@Showing %d to %d of %d entries', $this->firstItemNumber, $this->lastItemNumber, $this->totalItemCount); ?></div>
+	  </div>
+	  
+  </div>
+<?php endif; ?>

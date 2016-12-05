@@ -1,0 +1,51 @@
+<!-- Paginator -->
+<?php echo $this->paginationControl($this->dataGrid()->dataSource, $this->dataGrid()->paginator->getType(), $this->dataGrid()->paginator->getViewScript()); ?>
+<!-- /Paginator -->
+
+<!-- Listview -->
+<div class="table-responsive dataGrid">
+	
+	<table class="table table-bordered dataTable">
+			
+  		<!-- Table header -->
+		<thead>
+			<tr>
+	            <?php foreach ($this->dataGrid()->columns as $column) : ?>
+	            <th <?php if ($column->getBody()->isSortEnabled()) : ?> class="sorting <?php if ($this->dataGrid()->orderBy === $column->getBody()->getName()) : ?> <?php if ($this->dataGrid()->sortType === Lumia_DataGrid::SORT_ASC) : ?>desc<?php else : ?>asc<?php endif; ?> <?php else: ?>default<?php endif; ?>" onclick="LumiaJS.dataTable.get('<?php echo $this->escape($this->dataGrid()->name); ?>').loadPage('<?php echo $this->dataGrid()->sortUrl(array('order' => $column->getBody()->getName())); ?>');"<?php endif; ?> id="thead-<?php echo $column->getBody()->getId(); ?>">
+	            	<?php echo $column->getHeader(); ?>
+	            </th>
+	            <?php endforeach; ?>
+	        </tr>
+		</thead>
+		<!-- /Table header -->
+		
+		<!-- Table body -->
+		<tbody>
+			<?php if ($this->dataGrid()->dataSource->count()) : ?>
+		        <?php foreach ($this->dataGrid()->dataSource as $_row): ?>
+		        <?php
+	              	// Prepare data source for the columns
+		        	$row = is_callable(array($_row, 'toArray')) ? $_row->toArray() : (array) $_row;
+                  	$this->dataGrid()->columns->setData(is_callable(array($_row, 'toArray')) ? $_row->toArray() : (array) $_row);
+                ?>
+		        <tr>
+		          <?php foreach ($this->dataGrid()->columns as $column) : ?>
+		          		<?php $body = clone $column->getBody(); ?>
+		                <td<?php echo $body->attributesToHtml(); ?>><?php echo $body; ?></td>
+		            <?php endforeach; ?>
+		        </tr>
+		        <?php endforeach; ?>
+		    <?php else : ?>
+		    	<tr><td colspan="<?php echo count($this->dataGrid()->columns); ?>" class="text-center"><?php echo $this->translate('DataTable:@No record found'); ?></td></tr>
+		    <?php endif; ?>
+		</tbody>
+		<!-- /Table body -->
+		
+	</table>
+	
+</div>
+<!-- /Listview -->
+
+<!-- Paginator -->
+<?php echo $this->paginationControl($this->dataGrid()->dataSource, $this->dataGrid()->paginator->getType(), $this->dataGrid()->paginator->getViewScript()); ?>
+<!-- /Paginator -->

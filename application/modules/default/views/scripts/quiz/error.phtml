@@ -1,0 +1,12 @@
+<div class="container">
+	<div class="page-header page-header-custom">
+		<h2><?php echo $this->translate('QuizForm:@Error page'); ?></h2>
+	</div>
+</div>
+
+<div class="container text-center">
+	<div class="page-body page-body-default"><div class="alert alert-danger quiz-error-message" role="alert"><?php echo $this->translate($this->message); ?></div></div>
+	<div class="page-footer">
+		<a href="<?php echo $this->baseUrl('index'); ?>" class="btn btn-default btn-lg"><?php echo $this->translate('ExamListView:@Exam list'); ?></a>
+	</div>
+</div>

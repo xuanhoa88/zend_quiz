@@ -1,0 +1,15 @@
+<div class="text-center">
+	<div class="btn-group">
+		<!-- Edit -->
+		<a href="<?php echo $this->escape($this->baseUrl('admin/student/edit/id/' . $this->student_id)); ?>" class="btn btn-default btn-sm"><i class="fa fa-edit fa-fw"></i> <?php echo $this->translate('ListView:@Edit'); ?></a>
+		<!-- Edit -->
+		
+		<!-- Account -->
+		<a href="<?php echo $this->escape($this->baseUrl('admin/user/edit/id/' . $this->student_user)); ?>" class="btn btn-default btn-sm"><i class="fa fa-user fa-fw"></i> <?php echo $this->translate('StudentListView:@Modify user'); ?></a>
+		<!-- Account -->
+		
+		<!-- Delete -->
+		<a href="javascript:void(0);" onclick="LumiaJS.dataTable.get('<?php echo $this->escape($this->dataGrid()->name); ?>').submitAction('<?php echo $this->escape($this->baseUrl('admin/student/delete/id/' . $this->student_id)); ?>');" class="btn btn-danger btn-sm"><i class="fa fa-trash-o fa-fw"></i> <?php echo $this->translate('ListView:@Delete'); ?></a>
+		<!-- Delete -->
+	</div>
+</div>

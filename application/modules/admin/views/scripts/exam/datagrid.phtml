@@ -1,0 +1,29 @@
+<!-- Toolbar -->
+<div class="pull-right">
+
+	<button type="button" class="btn btn-success" onclick="LumiaJS.dataTable.redirect('<?php echo $this->escape($this->baseUrl('admin/exam/add')); ?>');">
+		<span class="glyphicon glyphicon-plus"></span> <?php echo $this->translate('ListView:@Add new'); ?>
+	</button>
+	
+	<div class="btn-group">
+		<button type="button" class="btn btn-default" onclick="LumiaJS.dataTable.get('<?php echo $this->escape($this->dataGrid()->name); ?>').performAction('<?php echo $this->escape($this->baseUrl('admin/exam/active')); ?>');">
+			<span class="glyphicon glyphicon-ok-circle"></span> <?php echo $this->translate('ListView:@Activate'); ?>
+		</button>
+		
+		<button type="button" class="btn btn-default" onclick="LumiaJS.dataTable.get('<?php echo $this->escape($this->dataGrid()->name); ?>').performAction('<?php echo $this->escape($this->baseUrl('admin/exam/deactive')); ?>');">
+			<span class="glyphicon glyphicon-ban-circle"></span> <?php echo $this->translate('ListView:@Deactivate'); ?>
+		</button>
+	</div>
+	
+	<button type="button" class="btn btn-danger" onclick="LumiaJS.dataTable.get('<?php echo $this->escape($this->dataGrid()->name); ?>').performAction('<?php echo $this->escape($this->baseUrl('admin/exam/delete-via-selected')); ?>');">
+		<span class="glyphicon glyphicon-trash"></span> <?php echo $this->translate('ListView:@Delete selected row(s)'); ?>
+	</button>
+		
+</div>
+
+<div class="clearfix"></div>
+<!-- /Toolbar -->
+
+<!-- Table -->
+<?php echo $this->render('datagrid/table.phtml'); ?>
+<!-- /Table -->

@@ -1,0 +1,197 @@
+<form name="<?php echo $this->element->getName(); ?>" action="<?php echo $this->element->getAction(); ?>" method="<?php echo $this->element->getMethod(); ?>">
+	<?php echo $this->element->getElement('teacher_id'); ?>
+	
+	<div class="row">
+		
+		<div class="col-lg-6">
+		
+		    <div class="form-group<?php echo ($this->element->getElement('teacher_name')->hasErrors() ? ' has-error' : ''); ?>">
+				<label class="control-label"><?php echo $this->element->getElement('teacher_name')->getLabel(); ?></label> 
+				<div class="input-group">
+					<span class="input-group-addon"><i class="fa fa-caret-right icon-mandatory"></i></span>
+					<?php echo $this->element->getElement('teacher_name')->setAttribs(array('class' => 'form-control')); ?>
+				</div>
+				<?php echo $this->formErrors($this->element->getElement('teacher_name')->getMessages()); ?>
+			</div>
+			
+			<div class="form-group<?php echo ($this->element->getElement('teacher_identification')->hasErrors() ? ' has-error' : ''); ?>">	
+				<label class="control-label"><?php echo $this->element->getElement('teacher_identification')->getLabel(); ?></label>
+				<div class="input-group">
+					<span class="input-group-addon"></span>
+					<?php echo $this->element->getElement('teacher_identification')->setAttribs(array('class' => 'form-control')); ?> 
+				</div>
+				<?php echo $this->formErrors($this->element->getElement('teacher_identification')->getMessages()); ?>
+			</div>
+			
+			<div class="form-group<?php echo ($this->element->getElement('teacher_gender')->hasErrors() ? ' has-error' : ''); ?>">	
+				<label class="control-label"><?php echo $this->element->getElement('teacher_gender')->getLabel(); ?></label>
+				<div class="input-group">
+					<?php echo $this->element->getElement('teacher_gender')->setOptions(array('label_class' => array('class' => 'radio-inline')))->setSeparator('&nbsp;'); ?>
+				</div>
+				<?php echo $this->formErrors($this->element->getElement('teacher_gender')->getMessages()); ?>
+			</div>
+
+			<div class="form-group<?php echo ($this->element->getElement('teacher_birth')->hasErrors() ? ' has-error' : ''); ?>">
+				<label class="control-label"><?php echo $this->element->getElement('teacher_birth')->getLabel(); ?></label>
+				<div class="row">
+					<?php echo $this->element->getElement('teacher_birth')->setTemplate('<div class="col-xs-3"><div class="input-group"><span class="input-group-addon"><i class="fa fa-caret-right icon-mandatory"></i></span>%input%</div></div>')->setAttrib('class', 'form-control'); ?>
+				</div>
+				<?php echo $this->formErrors($this->element->getElement('teacher_birth')->getMessages()); ?>
+			</div>
+			
+			<div class="form-group<?php echo ($this->element->getElement('address_line')->hasErrors() ? ' has-error' : ''); ?>">
+				<label class="control-label"><?php echo $this->element->getElement('address_line')->getLabel(); ?></label>
+				<div class="input-group">
+					<span class="input-group-addon"><i class="fa fa-caret-right icon-mandatory"></i></span>
+					<?php echo $this->element->getElement('address_line')->setAttribs(array('class' => 'form-control')); ?>
+				</div>
+				<?php echo $this->formErrors($this->element->getElement('address_line')->getMessages()); ?>
+			</div>
+			
+			<div class="form-group<?php echo ($this->element->getElement('address_line2')->hasErrors() ? ' has-error' : ''); ?>">
+				<label class="control-label"><?php echo $this->element->getElement('address_line2')->getLabel(); ?></label>	
+				<div class="input-group">
+					<span class="input-group-addon"></span>
+					<?php echo $this->element->getElement('address_line2')->setAttribs(array('class' => 'form-control')); ?>
+				</div>
+				<?php echo $this->formErrors($this->element->getElement('address_line2')->getMessages()); ?>
+			</div>
+			
+			<div class="form-group<?php echo ($this->element->getElement('address_country')->hasErrors() ? ' has-error' : ''); ?>">	
+				<label class="control-label"><?php echo $this->element->getElement('address_country')->getLabel(); ?></label>
+				<div class="input-group">
+					<span class="input-group-addon"><i class="fa fa-caret-right icon-mandatory"></i></span>
+					<?php echo $this->element->getElement('address_country')->setAttribs(array('class' => 'form-control')); ?> 
+				</div>
+				<?php echo $this->formErrors($this->element->getElement('address_country')->getMessages()); ?>
+			</div>
+			
+			<div class="form-group<?php echo ($this->element->getElement('address_phone')->hasErrors() ? ' has-error' : ''); ?>">	
+				<label class="control-label"><?php echo $this->element->getElement('address_phone')->getLabel(); ?></label>
+				<div class="input-group">
+					<span class="input-group-addon"></span>
+					<?php echo $this->element->getElement('address_phone')->setAttribs(array('class' => 'form-control')); ?> 
+				</div>
+				<?php echo $this->formErrors($this->element->getElement('address_phone')->getMessages()); ?>
+			</div>
+			
+			<div class="form-group<?php echo ($this->element->getElement('address_postal_code')->hasErrors() ? ' has-error' : ''); ?>">	
+				<label class="control-label"><?php echo $this->element->getElement('address_postal_code')->getLabel(); ?></label>
+				<div class="input-group">
+					<span class="input-group-addon"></span>
+					<?php echo $this->element->getElement('address_postal_code')->setAttribs(array('class' => 'form-control')); ?> 
+				</div>
+				<?php echo $this->formErrors($this->element->getElement('address_postal_code')->getMessages()); ?>
+			</div>
+			
+			<div class="form-group<?php echo ($this->element->getElement('address_province')->hasErrors() ? ' has-error' : ''); ?>">	
+				<label class="control-label"><?php echo $this->element->getElement('address_province')->getLabel(); ?></label>
+				<div class="input-group">
+					<span class="input-group-addon"></span>
+					<?php echo $this->element->getElement('address_province')->setAttribs(array('class' => 'form-control')); ?> 
+				</div>
+				<?php echo $this->formErrors($this->element->getElement('address_province')->getMessages()); ?>
+			</div>
+			
+			<div class="form-group<?php echo ($this->element->getElement('address_district')->hasErrors() ? ' has-error' : ''); ?>">	
+				<label class="control-label"><?php echo $this->element->getElement('address_district')->getLabel(); ?></label>
+				<div class="input-group">
+					<span class="input-group-addon"></span>
+					<?php echo $this->element->getElement('address_district')->setAttribs(array('class' => 'form-control')); ?> 
+				</div>
+				<?php echo $this->formErrors($this->element->getElement('address_district')->getMessages()); ?>
+			</div>
+			
+			<div class="form-group<?php echo ($this->element->getElement('user_status')->hasErrors() ? ' has-error' : ''); ?>">	
+				<label class="control-label"><?php echo $this->element->getElement('user_status')->getLabel(); ?></label>
+				<div class="input-group">
+					<?php echo $this->element->getElement('user_status')->setOptions(array('label_class' => array('class' => 'radio-inline')))->setSeparator('&nbsp;'); ?>
+				</div>
+				<?php echo $this->formErrors($this->element->getElement('user_status')->getMessages()); ?>
+			</div>
+				
+		</div>
+		
+		<div class="col-lg-6">
+			
+			<div class="form-group<?php echo ($this->element->getElement('teacher_department')->hasErrors() ? ' has-error' : ''); ?>">	
+				<label class="control-label"><?php echo $this->element->getElement('teacher_department')->getLabel(); ?></label>
+				<div class="input-group">
+					<span class="input-group-addon"><i class="fa fa-caret-right icon-mandatory"></i></span>
+					<?php echo $this->element->getElement('teacher_department')->setAttribs(array('class' => 'form-control')); ?> 
+				</div>
+				<?php echo $this->formErrors($this->element->getElement('teacher_department')->getMessages()); ?>
+			</div>
+			
+			<div class="form-group<?php echo ($this->element->getElement('teacher_subject')->hasErrors() ? ' has-error' : ''); ?>">	
+				<label class="control-label"><?php echo $this->element->getElement('teacher_subject')->getLabel(); ?></label>
+				<div class="checkbox subject_department">
+					<?php echo $this->element->getElement('teacher_subject'); ?> 
+				</div>
+				<?php echo $this->formErrors($this->element->getElement('teacher_subject')->getMessages()); ?>
+			</div>
+		
+			<div class="form-group<?php echo ($this->element->getElement('teacher_code')->hasErrors() ? ' has-error' : ''); ?>">	 
+				<label class="control-label"><?php echo $this->element->getElement('teacher_code')->getLabel(); ?></label> 
+				<div class="input-group">
+					<span class="input-group-addon"><i class="fa fa-caret-right icon-mandatory"></i></span>
+					<?php echo $this->element->getElement('teacher_code')->setAttribs(array('class' => 'form-control')); ?>
+				</div>
+				<?php echo $this->formErrors($this->element->getElement('teacher_code')->getMessages()); ?>
+			</div>
+			
+			<!-- Account -->
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					<h2><?php echo $this->translate('TeacherForm:@Account'); ?></h2>
+				</div>
+				<div class="panel-body">
+					<div class="form-group<?php echo ($this->element->getElement('account_username')->hasErrors() ? ' has-error' : ''); ?>">
+						<label class="control-label"><?php echo $this->element->getElement('account_username')->getLabel(); ?></label>
+						<div class="input-group">
+							<span class="input-group-addon"><i class="fa fa-caret-right icon-mandatory"></i></span>
+							<?php echo $this->element->getElement('account_username')->setAttribs(array('class' => 'form-control')); ?>
+						</div>
+						<?php echo $this->formErrors($this->element->getElement('account_username')->getMessages()); ?>
+					</div>
+			
+					<div class="form-group<?php echo ($this->element->getElement('user_email')->hasErrors() ? ' has-error' : ''); ?>">	
+						<label class="control-label"><?php echo $this->element->getElement('user_email')->getLabel(); ?></label>
+						<div class="input-group">
+							<span class="input-group-addon"><i class="fa fa-caret-right icon-mandatory"></i></span>
+							<?php echo $this->element->getElement('user_email')->setAttribs(array('class' => 'form-control')); ?>
+						</div>
+						<?php echo $this->formErrors($this->element->getElement('user_email')->getMessages()); ?>
+					</div>
+					
+					<div class="form-group<?php echo ($this->element->getElement('account_password')->hasErrors() ? ' has-error' : ''); ?>">
+						<label class="control-label"><?php echo $this->element->getElement('account_password')->getLabel(); ?></label>
+						<div class="input-group">
+							<span class="input-group-addon"><i class="fa fa-caret-right icon-mandatory"></i></span>
+							<?php echo $this->element->getElement('account_password')->setAttribs(array('class' => 'form-control')); ?>
+						</div>
+						<?php echo $this->formErrors($this->element->getElement('account_password')->getMessages()); ?>
+					</div>
+					
+					<div class="form-group<?php echo ($this->element->getElement('account_verify_password')->hasErrors() ? ' has-error' : ''); ?>">
+						<label class="control-label"><?php echo $this->element->getElement('account_verify_password')->getLabel(); ?></label>
+						<div class="input-group">
+							<span class="input-group-addon"><i class="fa fa-caret-right icon-mandatory"></i></span>
+							<?php echo $this->element->getElement('account_verify_password')->setAttribs(array('class' => 'form-control')); ?>
+						</div>
+						<?php echo $this->formErrors($this->element->getElement('account_verify_password')->getMessages()); ?>
+					</div>
+				</div>
+			</div>
+			<!-- Account -->
+			
+		</div>
+			
+	</div>
+
+	<div class="btn-toolbar">
+		<?php echo $this->element->getElement('btnSave')->setAttribs(array('class' => 'btn btn-lg btn-primary')); ?>
+		<?php echo $this->element->getElement('btnReset')->setAttribs(array('class' => 'btn btn-lg btn-danger')); ?>
+	</div>
+	
+</form>

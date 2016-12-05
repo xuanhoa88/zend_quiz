@@ -1,0 +1,23 @@
+<?php if ($this->element->getElement('btnAddNewAnswer')->hasErrors()) : ?>
+	<div id="list-answers-error-messages" class="alert alert-danger">	 
+		<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+		<?php echo $this->formErrors($this->element->getElement('btnAddNewAnswer')->getMessages(), array('elementStart' => '', 'elementEnd' => '')); ?>
+	</div>
+<?php endif; ?>
+
+<fieldset>
+	
+	<div id="list-answers">
+		<?php 
+			
+			foreach ($this->element->getSubForm('dependencyAnswers') as $formElement) : 
+				echo $this->partial('form/per-answer.phtml', array('formElement' => $formElement));
+			endforeach; 
+		?>
+	</div>
+	
+	<div class="btn-toolbar pull-right">
+	    <?php echo $this->element->getElement('btnAddNewAnswer')->setAttribs(array('class' => 'btn btn-success btn-lg')); ?>
+	</div>
+    			
+</fieldset>

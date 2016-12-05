@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />  
+	<?php echo $this->partial('header.phtml'); ?>
+    </head>  
+	<body>
+	
+		<div id="wrapper">
+			<!-- /.navigation -->
+			<?php echo $this->partial('navigation.phtml'); ?>
+			
+			<!-- /.controller -->
+            <div id="page-wrapper"><?php echo $this->layout()->content; ?></div>
+        </div>
+        
+        <!-- /.footer -->
+		<?php echo $this->partial('footer.phtml'); ?>
+		
+		<!-- /.message -->
+		<?php echo $this->partial('message.phtml'); ?>
+	</body>
+</html>

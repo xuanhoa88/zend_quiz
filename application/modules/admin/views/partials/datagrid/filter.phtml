@@ -1,0 +1,48 @@
+<?php 
+// Button search
+$btnFilter = $this->element->getElement('btnFilter');
+$this->element->removeElement('btnFilter');
+
+// Button reset filter form
+$btnReset = $this->element->getElement('btnReset');
+$this->element->removeElement('btnReset');
+
+// Button clear filter form
+$btnClear = $this->element->getElement('btnClear');
+$this->element->removeElement('btnClear');
+?>
+<!-- Panel -->
+<div class="panel panel-default">
+	
+	<!-- Heading -->
+    <div class="panel-heading"><?php echo $this->translate('ListView:@Filter'); ?></div>
+    <!-- /Heading -->
+    
+    <!-- Body -->
+    <div class="panel-body">
+        
+        <!-- Elements -->
+        <?php foreach ($this->element->getElements() as $element) : ?>
+		<div class="col-lg-6">
+	        <div class="form-group">
+				<?php echo $element->setAttribs(array('class' => 'form-control')); ?>
+			</div>
+		</div>
+		<?php endforeach; ?>
+        <!-- /Elements -->
+        
+        <!-- Button -->
+        <div class="pull-right">
+	
+			<?php echo $btnFilter->setAttribs(array('class' => 'btn btn-default btn-primary')); ?>
+			<?php echo $btnReset->setAttribs(array('class' => 'btn btn-default')); ?>
+			<?php echo $btnClear->setAttribs(array('class' => 'btn btn-default')); ?>
+			
+		</div>
+		<!-- /Button -->
+		
+    </div>
+    <!-- /Body -->
+    
+</div>
+<!-- Panel -->

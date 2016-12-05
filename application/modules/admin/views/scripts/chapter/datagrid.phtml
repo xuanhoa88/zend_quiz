@@ -1,0 +1,39 @@
+<!-- Toolbar -->
+<div class="pull-left">
+	<button type="button" class="btn btn-default" onclick="LumiaJS.dataTable.redirect('<?php echo $this->escape($this->baseUrl('admin/subject')); ?>');">
+		<span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span> <?php echo $this->translate('PageHeader:@Manage subjects'); ?>
+	</button>
+</div>
+
+<div class="pull-right">
+
+	<button type="button" class="btn btn-success" onclick="LumiaJS.dataTable.redirect('<?php echo $this->escape($this->baseUrl('admin/chapter/add/subject/' . $this->subjectRow->subject_id)); ?>');">
+		<span class="glyphicon glyphicon-plus"></span> <?php echo $this->translate('ListView:@Add new'); ?>
+	</button>
+	
+	<div class="btn-group">
+		<button type="button" class="btn btn-default" onclick="LumiaJS.dataTable.get('<?php echo $this->escape($this->dataGrid()->name); ?>').performAction('<?php echo $this->escape($this->baseUrl('admin/chapter/active/subject/' . $this->subjectRow->subject_id)); ?>');">
+			<span class="glyphicon glyphicon-ok-circle"></span> <?php echo $this->translate('ListView:@Activate'); ?>
+		</button>
+		
+		<button type="button" class="btn btn-default" onclick="LumiaJS.dataTable.get('<?php echo $this->escape($this->dataGrid()->name); ?>').performAction('<?php echo $this->escape($this->baseUrl('admin/chapter/deactive/subject/' . $this->subjectRow->subject_id)); ?>');">
+			<span class="glyphicon glyphicon-ban-circle"></span> <?php echo $this->translate('ListView:@Deactivate'); ?>
+		</button>
+	</div>
+	
+	<button type="button" class="btn btn-warning" onclick="LumiaJS.dataTable.get('<?php echo $this->escape($this->dataGrid()->name); ?>').submitAction('<?php echo $this->escape($this->baseUrl('admin/chapter/order/subject/' . $this->subjectRow->subject_id)); ?>');">
+		<span class="glyphicon glyphicon-sort"></span> <?php echo $this->translate('ChapterListView:@Collocation'); ?>
+	</button>
+	
+	<button type="button" class="btn btn-danger" onclick="LumiaJS.dataTable.get('<?php echo $this->escape($this->dataGrid()->name); ?>').performAction('<?php echo $this->escape($this->baseUrl('admin/chapter/delete-via-selected/subject/' . $this->subjectRow->subject_id)); ?>');">
+		<span class="glyphicon glyphicon-trash"></span> <?php echo $this->translate('ListView:@Delete selected row(s)'); ?>
+	</button>
+		
+</div>
+
+<div class="clearfix"></div>
+<!-- /Toolbar -->
+
+<!-- Table -->
+<?php echo $this->render('datagrid/table.phtml'); ?>
+<!-- /Table -->

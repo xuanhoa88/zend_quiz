@@ -1,0 +1,230 @@
+/* WRAPPER */
+#wrapper .navbar {
+	margin-bottom: 0;
+}
+
+#wrapper .navbar-collapse {
+	padding-left: 0;
+	padding-right: 0;
+}
+
+#page-wrapper .page-header {
+	margin-top: 20px;
+}
+	
+@media ( min-width :768px) {
+	#page-wrapper .page-header {
+		margin-top: 60px;
+	}
+}
+
+.page-printing .page-header {
+	border-bottom: none;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+/* LOGIN FORM */
+div.wrapper-login form div.form-group-remember {
+	margin-bottom: 0;
+}
+
+/* PAGINATION */
+.pagination.pagination-left {
+	float: left;
+}
+
+.pagination.pagination-right {
+	float: right;
+}
+
+/* FORM */
+form .data-grid-filter .well { 
+	padding-bottom: 5px; 
+}
+
+form label.radio-inline, 
+form label.checkbox-inline {
+	white-space: nowrap;
+}
+
+form i.fa.icon-mandatory {
+	color: #ce3229;
+}
+
+form div.subject_department {
+	max-height: 165px;
+	overflow: auto;
+	border: 1px solid #ccc;
+	padding: 2px 5px;
+	margin-top: 0;
+}
+
+form input.form-input-order {
+	width: 60px;
+}
+
+form[name=questionForm] fieldset {
+	padding-bottom: 15px; 
+}
+
+form[name=questionForm] fieldset #list-answers button[name^=answer] {
+	margin-top: -10px; 
+}
+
+form[name=questionForm] fieldset {
+	padding-bottom: 15px; 
+}
+
+form[name=examForm] #exam-questions legend {
+	font-size: inherit;
+	font-weight: bold;
+	border-bottom: none;
+}
+
+form[name=examForm] #exam-questions fieldset {
+	margin-top: 5px;
+}
+
+form[name=examForm] #exam-questions table > thead > tr:first-child > th:first-child {
+	vertical-align: middle;
+	width: 30%;
+}
+
+form[name=examForm] #exam-classes fieldset {
+	border: 1px solid #ddd;
+	padding-top: 15px;
+	padding-bottom: 10px;
+	margin-bottom: 5px;
+}
+
+div.rearrange-navbar {
+	max-height: 400px;
+	overflow-y: auto;
+	border: 1px solid #eee;
+	padding-bottom: 10px;
+}
+
+/* SORTABLE */
+ol.sortable, 
+ol.sortable ol {
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+}
+
+ol.sortable ol {
+	margin-left: 25px;
+}
+
+.sortable li {
+	margin: 5px 0 0 0;
+	padding: 0;
+}
+
+.sortable li div  {
+	border: 1px solid #d4d4d4;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	border-color: #D4D4D4 #D4D4D4 #BCBCBC;
+	padding: 6px;
+	margin: 0;
+	cursor: move;
+	background-color: #f8f8f8;
+}
+
+.sortable .mjs-nestedSortable-error {
+	border-color: transparent;
+}
+
+.sortable li.mjs-nestedSortable-branch div {
+}
+
+.sortable li.mjs-nestedSortable-leaf div {
+}
+
+.sortable li.mjs-nestedSortable-collapsed.mjs-nestedSortable-hovering div {
+	border-color: #999;
+}
+
+.sortable .disclose {
+	cursor: pointer;
+	width: 10px;
+	display: none;
+}
+
+.sortable li.mjs-nestedSortable-collapsed > ol {
+	display: none;
+}
+
+.sortable li.mjs-nestedSortable-branch > div > .disclose {
+	display: inline-block;
+}
+
+.sortable li.mjs-nestedSortable-collapsed > div > .disclose > span:before {
+	content: '+ ';
+}
+
+.sortable li.mjs-nestedSortable-expanded > div > .disclose > span:before {
+	content: '- ';
+}
+
+/* MEDIA FILES */
+form[name=mediaForm] .uploadify-queue-item {
+}
+
+form[name=mediaForm] .uploadify-queue-item .cancel a {
+  	background: none;
+  	height: auto;
+  	text-indent: inherit;
+  	width: auto;
+}
+
+form[name=mediaForm] .uploadify-queue-item .thumbnail {
+	margin-bottom: 0;
+}
+
+form[name=mediaForm] .progress {
+	margin-bottom: 2px;
+	margin-top: 2px;
+	height: 5px;
+}
+
+form[name=mediaForm] .action {
+	margin-top: 5px;
+}
+
+form[name=mediaForm] .progress .progress-bar {
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+form[name=mediaForm] .progress .progress-bar:after {
+    content:"";
+    background-color: darkgreen;
+    width: 30px;
+    height: 30px;
+    margin-right: -15px;         /* - 30/2 */
+    margin-top: -5px;            /* - (30-20)/2 */
+    -webkit-border-radius: 15px; /* 30/2 */
+    -moz-border-radius: 15px; 
+    border-radius: 15px;
+}
+
+.modal.modal-fs .modal-dialog {
+  width: 100%;
+  height: auto;
+  padding: 0;
+  margin: 0;
+}
+
+.modal.modal-fs .modal-content {
+  height: 100%;
+  border-radius: 0;
+}
+
+.input-group-addon.suffix {
+	background-color: transparent;
+}

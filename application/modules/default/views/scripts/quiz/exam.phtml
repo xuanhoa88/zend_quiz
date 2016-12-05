@@ -1,0 +1,148 @@
+<div class="container">
+	<div class="page-header page-header-custom">
+		<h2><?php echo $this->translate('QuizForm:@Exam code'); ?><button type="button" class="btn btn-info btn-lg pull-right"><?php echo $this->examManagementRow->exam_code; ?></button></h2>
+	</div>
+</div>
+
+<div class="container">
+	<div class="page-body page-body-default" id="container-exam">
+	
+    	<div class="row">
+    		
+    		<div class="col-lg-4 col-sm-4">
+	            <div class="panel panel-default">
+	                <div class="panel-heading"><h4><?php echo $this->translate('QuizForm:@Exam information'); ?></h4></div>
+	                <ul class="list-group list-group-flush">
+	        			<li class="list-group-item">
+	        				<?php echo $this->translate('QuizForm:@Student name'); ?>
+	        				<span class="pull-right badge badge-primary"><?php echo $this->studentSession()->student_name; ?></span>
+	        			</li>
+	        			<li class="list-group-item">
+	        				<?php echo $this->translate('QuizForm:@Student code'); ?>
+	        				<span class="pull-right badge badge-primary"><?php echo $this->studentSession()->student_code; ?></span>
+	        			</li>
+	        			<li class="list-group-item">
+	        				<?php echo $this->translate('QuizForm:@Class name'); ?>
+        				    <span class="pull-right badge badge-primary"><?php echo $this->studentSession()->class_name; ?></span>
+	        			</li>
+	                    <li class="list-group-item">
+	                    	<?php echo $this->translate('QuizForm:@Subject'); ?> 
+	        				<span class="pull-right badge badge-primary"><?php echo $this->examManagementRow->subject_name; ?></span>
+	        			</li>
+	        			<li class="list-group-item">
+	        				<?php echo $this->translate('QuizForm:@Department name'); ?>
+        				    <span class="pull-right badge badge-primary"><?php echo $this->examManagementRow->department_name; ?></span>
+	        			</li>
+	                    <li class="list-group-item">
+	                        <?php echo $this->translate('QuizForm:@Start time'); ?>
+	                        <span class="pull-right badge badge-primary"><?php echo $this->examManagementRow->exam_management_start_time; ?></span>
+	                    </li>
+	                    <li class="list-group-item">
+	                        <?php echo $this->translate('QuizForm:@Involved time'); ?>
+	                        <span class="pull-right badge badge-primary"><?php echo $this->examManagementRow->exam_student_involved_time; ?></span>
+	                    </li>
+	                </ul>
+	            </div>
+	        </div> 
+    		
+    		<div class="col-lg-8 col-sm-8">
+	    		<div class="row">
+	    		
+			    	<div class="col-lg-12">
+			    		<div class="row">
+				    		<div class="col-lg-8">
+				    			<div id="quiz-countdown">
+				    				<button class="btn btn-lg btn-warning">
+					    				<span class="days"></span>
+					    				<span><?php echo $this->translate('QuizForm:@Day(s)'); ?></span>
+					    			</button>
+					    			<button class="btn btn-lg btn-warning">
+					    				<span class="hours"></span>
+					    				<span><?php echo $this->translate('QuizForm:@Hour(s)'); ?></span>
+					    			</button>
+					    			<button class="btn btn-lg btn-warning">
+					    				<span class="minutes"></span>
+					    				<span><?php echo $this->translate('QuizForm:@Minute(s)'); ?></span>
+					    			</button>
+					    			<button class="btn btn-lg btn-warning">
+					    				<span class="seconds"></span>
+					    				<span><?php echo $this->translate('QuizForm:@Second(s)'); ?></span>
+					    			</button>
+					    		</div>
+								
+				    		</div>
+				    		<div class="col-lg-4"><button class="btn btn-lg pb-button pull-right" id="button-elective-question" type="button"><?php echo $this->translate('QuizForm:@Question list')?></button></div>
+			    		</div>
+			    	</div>
+			    	
+			    	<div class="clearfix"></div>
+			    	
+			    	<div class="col-lg-12" id="exam-current-question"></div>
+			    	
+			    	<div class="clearfix"></div>
+			    	
+			    	<div class="col-lg-12">
+			    
+			    		<div class="btn-group pull-left">
+			    			<button class="btn btn-lg btn-primary" id="button-prev-question" type="button">&larr; <?php echo $this->translate('QuizForm:@Previous question')?></button>
+			    			<button class="btn btn-lg btn-primary" id="button-next-question" type="button"><?php echo $this->translate('QuizForm:@Next question')?> &rarr;</button>
+			    		</div>
+			    
+			    		<div class="pull-right">
+			    			<button class="btn btn-lg btn-danger" id="button-exam-finish" type="button"><?php echo $this->translate('QuizForm:@Submit')?></button>
+			    		</div>
+			    
+			    	</div>
+		    	</div>
+		    	
+	    	</div>
+	    	
+    	</div>
+    	
+    </div>	
+</div>
+<script type="text/javascript">
+jQuery(document).ready(function() {
+
+	// Init quiz object
+	var Quiz = new LumiaJS.Quiz(<?php echo Zend_Json::encode($this->quiz->template); ?>);
+
+	// Set buttons
+	Quiz.actionButtons({
+		'prev': '#button-prev-question',
+		'next': '#button-next-question',
+		'finish': '#button-exam-finish',
+	});
+
+	// Set location display
+	Quiz.locationDisplay('#exam-current-question');
+
+	// Set exam id
+	Quiz.examId('<?php echo $this->examId; ?>');
+
+	// Execute & show current question
+	Quiz.run();
+
+	// Init countdown timer
+	jQuery('#quiz-countdown').countdown({
+		'fromDate': new Date('<?php echo str_replace('-', '/', $this->countdownTimer->fromDate); ?>'),
+		'toDate': new Date('<?php echo str_replace('-', '/', $this->countdownTimer->toDate); ?>')
+	}, function(event) {
+		switch (event.type) {
+			case 'finished':
+				Quiz.finish();
+			break;
+			default:
+				var $type = jQuery(this).find('span.' + event.type);
+				if ($type.length > 0) {
+					if (event.value >= 0) {
+						$type.html(event.value);
+					}
+				}
+				break;
+		}
+	});
+
+});
+
+</script>

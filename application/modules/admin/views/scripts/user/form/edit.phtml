@@ -1,0 +1,78 @@
+<form name="<?php echo $this->element->getName(); ?>" action="<?php echo $this->element->getAction(); ?>" method="<?php echo $this->element->getMethod(); ?>">
+	<?php echo $this->element->getElement('user_id'); ?>
+	
+	<div class="row">
+		
+		<div class="col-lg-6">
+		
+		    <div class="form-group<?php echo ($this->element->getElement('user_name')->hasErrors() ? ' has-error' : ''); ?>">
+				<label class="control-label"><?php echo $this->element->getElement('user_name')->getLabel(); ?></label> 
+				<div class="input-group">
+					<span class="input-group-addon"><i class="fa fa-caret-right icon-mandatory"></i></span>
+					<?php echo $this->element->getElement('user_name')->setAttribs(array('class' => 'form-control')); ?>
+				</div>
+				<?php echo $this->formErrors($this->element->getElement('user_name')->getMessages()); ?>
+			</div>
+			
+			<div class="form-group<?php echo ($this->element->getElement('user_password')->hasErrors() ? ' has-error' : ''); ?>">
+				<label class="control-label"><?php echo $this->element->getElement('user_password')->getLabel(); ?></label>
+				<div class="input-group">
+					<span class="input-group-addon"></span>
+					<?php echo $this->element->getElement('user_password')->setAttribs(array('class' => 'form-control')); ?>
+				</div>
+				<?php echo $this->formErrors($this->element->getElement('user_password')->getMessages()); ?>
+			</div>
+			
+			<div class="form-group<?php echo ($this->element->getElement('user_verify_password')->hasErrors() ? ' has-error' : ''); ?>">
+				<label class="control-label"><?php echo $this->element->getElement('user_verify_password')->getLabel(); ?></label>
+				<div class="input-group">
+					<span class="input-group-addon"></span>
+					<?php echo $this->element->getElement('user_verify_password')->setAttribs(array('class' => 'form-control')); ?>
+				</div>
+				<?php echo $this->formErrors($this->element->getElement('user_verify_password')->getMessages()); ?>
+			</div>
+			
+		</div>
+		
+		<div class="col-lg-6">
+			
+			<div class="form-group<?php echo ($this->element->getElement('user_email')->hasErrors() ? ' has-error' : ''); ?>">	 
+				<label class="control-label"><?php echo $this->element->getElement('user_email')->getLabel(); ?></label> 
+				<div class="input-group">
+					<span class="input-group-addon"><i class="fa fa-caret-right icon-mandatory"></i></span>
+					<?php echo $this->element->getElement('user_email')->setAttribs(array('class' => 'form-control')); ?>
+				</div>
+				<?php echo $this->formErrors($this->element->getElement('user_email')->getMessages()); ?>
+			</div>
+			
+			<!-- Role -->
+			<div class="form-group<?php echo ($this->element->getElement('user_role')->hasErrors() ? ' has-error' : ''); ?>">	
+				<label class="control-label"><?php echo $this->element->getElement('user_role')->getLabel(); ?></label>
+				<div class="input-group">
+					<span class="input-group-addon"><i class="fa fa-caret-right icon-mandatory"></i></span>
+					<?php echo $this->element->getElement('user_role')->setAttribs(array('class' => 'form-control')); ?> 
+				</div>
+				<?php echo $this->formErrors($this->element->getElement('user_role')->getMessages()); ?>
+			</div>
+			<!-- Role -->
+			
+			<div class="form-group<?php echo ($this->element->getElement('user_status')->hasErrors() ? ' has-error' : ''); ?>">	
+				<label class="control-label"><?php echo $this->element->getElement('user_status')->getLabel(); ?></label>
+				<div class="input-group">
+					<?php echo $this->element->getElement('user_status')->setOptions(array('label_class' => array('class' => 'radio-inline')))->setSeparator('&nbsp;'); ?>
+				</div>
+				<?php echo $this->formErrors($this->element->getElement('user_status')->getMessages()); ?>
+			</div>
+				
+		</div>
+		
+		<?php echo $this->render('form/privileges.phtml'); ?>
+			
+	</div>
+
+	<div class="btn-toolbar">
+		<?php echo $this->element->getElement('btnSave')->setAttribs(array('class' => 'btn btn-lg btn-primary')); ?>
+		<?php echo $this->element->getElement('btnReset')->setAttribs(array('class' => 'btn btn-lg btn-danger')); ?>
+	</div>
+	
+</form>

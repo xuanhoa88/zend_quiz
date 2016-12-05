@@ -1,0 +1,51 @@
+<div class="container">
+	<div class="col-md-4"></div>
+	<div class="col-md-4 pb-box">
+		<div class="text-center">
+			<span class="fa fa-lock pb-bigicon"></span>
+		</div>
+		<form name="<?php echo $this->element->getName(); ?>" action="<?php echo $this->element->getAction(); ?>" method="<?php echo $this->element->getMethod(); ?>">
+			
+			<?php if ($errorMessages = $this->messenger('danger')) : ?>
+				<div class="alert alert-danger">
+					<?php foreach ($errorMessages as $message) : ?>
+					<p><?php echo $this->escape($message); ?></p>
+					<?php endforeach; ?>
+				</div>
+			<?php endif; ?>
+			
+			<div class="form-group">
+				<div class="input-group">
+					<span class="input-group-addon"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></span>
+					<?php echo $this->element->getElement('username')->setAttribs(array('class' => 'form-control input-lg')); ?>
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<div class="input-group">
+				<span class="input-group-addon"><span class="glyphicon glyphicon-lock" aria-hidden="true"></span></span>
+					<?php echo $this->element->getElement('password')->setAttribs(array('class' => 'form-control input-lg')); ?>
+				</div>
+			</div>
+				
+			<div class="form-group form-group-remember">
+				<label class="checkbox-inline">
+					<?php echo $this->element->getElement('remember'); ?>
+		        	<?php echo $this->element->getElement('remember')->getLabel(); ?>
+		        </label>
+			</div>
+			
+			<div class="form-group">
+				<?php echo $this->element->getElement('submit')->setAttribs(array('class' => 'btn btn-lg pb-button btn-block')); ?>
+			</div>
+			
+			<div class="col-md-12">
+				<div class="row">
+					<a href="#"><?php echo $this->translate('LoginForm:@Forgot password'); ?></a>
+				</div>
+			</div>
+			
+		</form>
+	</div>
+	<div class="col-md-4"></div>
+</div>

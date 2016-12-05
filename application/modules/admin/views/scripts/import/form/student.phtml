@@ -1,0 +1,63 @@
+<form name="<?php echo $this->element->getName(); ?>" action="<?php echo $this->element->getAction(); ?>" method="<?php echo $this->element->getMethod(); ?>" enctype="<?php echo $this->element->getEnctype(); ?>">
+
+	<div class="row">
+		
+		<div class="col-lg-6">
+
+			<div class="form-group<?php echo ($this->element->getElement('import_format')->hasErrors() ? ' has-error' : ''); ?>">	
+				<label class="control-label"><?php echo $this->element->getElement('import_format')->getLabel(); ?></label>
+				<div class="input-group">
+					<span class="input-group-addon"><i class="fa fa-caret-right icon-mandatory"></i></span>
+					<?php echo $this->element->getElement('import_format')->setAttribs(array('class' => 'form-control')); ?>
+					<span class="input-group-btn">
+						<?php echo $this->element->getElement('btnDownload')->setAttribs(array('class' => 'btn btn-primary')); ?>
+					</span>
+				</div>
+				<?php echo $this->formErrors($this->element->getElement('import_format')->getMessages()); ?>
+			</div>
+			
+			<div class="form-group<?php echo ($this->element->getElement('import_ignore_header')->hasErrors() ? ' has-error' : ''); ?>">
+				<label class="checkbox-inline">
+				    <?php echo $this->element->getElement('import_ignore_header'); ?>
+			        <?php echo $this->element->getElement('import_ignore_header')->getLabel(); ?>
+				</label>	 
+				<?php echo $this->formErrors($this->element->getElement('import_ignore_header')->getMessages()); ?>
+			</div>
+			
+		</div>
+		
+		<div class="col-lg-6">
+			
+			<?php if ($this->element->getView()->fileUploaded) : ?>
+			<div class="form-group has-success">
+				<label class="control-label"><?php echo $this->element->getElement('when_upload_succeeded')->getLabel(); ?></label>
+				<?php echo $this->element->getElement('when_upload_succeeded')->setAttribs(array('class' => 'form-control')); ?> 
+			</div>
+			<?php else : ?>
+		    <div class="form-group<?php echo ($this->element->getElement('import_file')->hasErrors() ? ' has-error' : ''); ?>">
+				<label class="control-label"><?php echo $this->element->getElement('import_file')->getLabel(); ?></label> 
+				<?php echo $this->element->getElement('import_file')->setAttribs(array('class' => 'form-control')); ?>
+				<?php echo $this->formErrors($this->element->getElement('import_file')->getMessages()); ?>
+			</div>
+			<?php endif; ?>
+				
+		</div>
+			
+	</div>
+
+	<div class="btn-toolbar">
+		<?php if ($this->element->getView()->fileUploaded) : ?>
+		<?php 
+			$btnProcess = $this->element->getElement('btnProcess');
+			$btnProcess->setLabel('<i class="fa fa-spinner fa-spin"></i>&nbsp;' . $btnProcess->getLabel());
+			$btnProcess->setAttribs(array('class' => 'btn btn-lg btn-success', 'escape' => false));
+			
+			echo $btnProcess; 
+		?>
+		<?php else : ?>
+		<?php echo $this->element->getElement('btnSave')->setAttribs(array('class' => 'btn btn-lg btn-primary')); ?>
+		<?php echo $this->element->getElement('btnReset')->setAttribs(array('class' => 'btn btn-lg btn-danger')); ?>
+		<?php endif; ?>
+	</div>
+
+</form>

@@ -1,0 +1,51 @@
+<!-- Toolbar -->
+<div class="row">
+	<div class="col-lg-12">
+		
+		<div class="pull-left">
+		
+			<button type="button" class="btn btn-success" onclick="LumiaJS.admin.media.add();">
+				<span class="glyphicon glyphicon-plus"></span> <?php echo $this->translate('ListView:@Add new'); ?>
+			</button>
+			
+		</div>
+		
+		<div class="pull-right">
+			<button type="button" class="btn btn-default">
+				<label class="checkbox-inline">
+					<?php echo $this->dataGrid()->columns['media_id']->getHeader(); ?>
+					<?php echo $this->translate('ListView:@Select all'); ?>
+				</label> 
+			</button>
+			<button type="button" class="btn btn-danger" onclick="LumiaJS.dataTable.get('<?php echo $this->escape($this->dataGrid()->name); ?>').performAction('<?php echo $this->escape($this->baseUrl('admin/media/delete-via-selected')); ?>');">
+				<span class="glyphicon glyphicon-trash"></span> <?php echo $this->translate('ListView:@Delete selected row(s)'); ?>
+			</button>
+		</div>
+		
+	</div>
+	
+</div>
+<!-- ./Toolbar -->
+
+<!-- Paginator -->
+<?php echo $this->paginationControl($this->dataGrid()->dataSource, $this->dataGrid()->paginator->getType(), $this->dataGrid()->paginator->getViewScript()); ?>
+<!-- ./Paginator -->
+
+<!-- Table -->
+<?php echo $this->render('datagrid/table.phtml'); ?>
+<!-- ./Table -->
+
+<!-- Paginator -->
+<?php echo $this->paginationControl($this->dataGrid()->dataSource, $this->dataGrid()->paginator->getType(), $this->dataGrid()->paginator->getViewScript()); ?>
+<!-- ./Paginator -->
+
+<script type="text/javascript">
+jQuery(function() {
+	/**
+	* Bind event when all files in the queue have been processed
+	*/
+	LumiaJS.uploadify.overrides.onQueueComplete = function(file) {
+		window.location.href = window.location.base + '/admin/media';
+	};
+});
+</script>

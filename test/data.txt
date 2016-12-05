@@ -1,0 +1,1964 @@
+Stack Exchange sign up log in tour help  stack overflow careers  
+
+
+Stack Overflow
+Questions
+ 
+Tags
+ 
+Users
+ 
+Badges
+ 
+Unanswered
+ 
+Ask Question
+Take the 2-minute tour × Stack Overflow is a question and answer site for professional and enthusiast programmers. It's 100% free, no registration required.
+Remove all special characters from a string [duplicate]
+
+
+up vote
+43
+down vote
+favorite
+18
+Possible Duplicate:
+Regular Expression Sanitize (PHP)
+I am facing an issue with URLs, I want to be able to convert titles that could contain anything and have them stripped of all special characters so they only have letters and numbers and of course I would like to replace spaces with hyphens.
+
+How would this be done? I've heard a lot about regular expressions (regex) being used...
+
+php regex url slug
+shareimprove this question
+edited Jan 1 '13 at 21:51
+
+hakre
+112k18140294	
+asked Jan 1 '13 at 21:31
+
+user115422
+81641224
+marked as duplicate by hakre, PeeHaa, tereško, Kate Gregory, Brooks Moses Jan 1 '13 at 23:53
+
+This question has been asked before and already has an answer. If those answers do not fully address your question, please ask a new question.
+
+1	 	
+Which question is this a duplicate of? –  starbeamrainbowlabs Jun 25 '14 at 9:47
+add a comment
+3 Answers
+activeoldestvotes
+up vote
+162
+down vote
+accepted
+Easy peasy:
+
+function clean($string) {
+   $string = str_replace(' ', '-', $string); // Replaces all spaces with hyphens.
+
+   return preg_replace('/[^A-Za-z0-9\-]/', '', $string); // Removes special chars.
+}
+Usage:
+
+echo clean('a|"bc!@£de^&$f g');
+Will output: abcdef-g
+
+Edit:
+
+Hey, just a quick question, how can I prevent multiple hyphens from being next to each other? and have them replaced with just 1? Thanks in advance!
+function clean($string) {
+   $string = str_replace(' ', '-', $string); // Replaces all spaces with hyphens.
+   $string = preg_replace('/[^A-Za-z0-9\-]/', '', $string); // Removes special chars.
+
+   return preg_replace('/-+/', '-', $string); // Replaces multiple hyphens with single one.
+}
+shareimprove this answer
+edited Jun 11 '14 at 23:58
+
+answered Jan 1 '13 at 21:33
+
+Terry Harvey
+2,4051614
+1	 	
+thanks, let me give it a shot! –  user115422 Jan 1 '13 at 21:34
+  	 	
+He was specifically asking for spaces to be replaced with hyphens... –  Jeffrey Jan 1 '13 at 21:36 
+  	 	
+@Artaex Media Sorry, missed that part! –  Terry Harvey Jan 1 '13 at 21:36
+1	 	
+ill mark this as answer, thanks a lot! –  user115422 Jan 1 '13 at 21:38
+1	 	
+PERFECT! thanks a million! –  user115422 Jan 1 '13 at 21:59
+show 14 more comments
+
+up vote
+20
+down vote
+Update
+
+The solution below has a "SEO friendlier" version:
+Suupaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbccccccccccccccccccccccccccccccccccccccccccccccccccccccccbbbbbbbbbbbbbbbbbbbbbbbbbbaaaaaaaaaaaaaaaaaaapuus
+function hyphenize($string) {
+    $dict = array(
+        "I'm"      => "I am",
+        "thier"    => "their",
+    );
+    return strtolower(
+        preg_replace(
+          array( '#[\\s-]+#', '#[^A-Za-z0-9\. -]+#' ),
+          array( '-', '' ),
+          // the full cleanString() can be download from http://www.unexpectedit.com/php/php-clean-string-of-utf8-chars-convert-to-similar-ascii-char
+          cleanString(
+              str_replace( // preg_replace to support more complicated replacements
+                  array_keys($dict),
+                  array_values($dict),
+                  urldecode($string)
+              )
+          )
+        )
+    );
+}
+
+function cleanString($text) {
+    $utf8 = array(
+        '/[áàâãªä]/u'   =>   'a',
+        '/[ÁÀÂÃÄ]/u'    =>   'A',
+        '/[ÍÌÎÏ]/u'     =>   'I',
+        '/[íìîï]/u'     =>   'i',
+        '/[éèêë]/u'     =>   'e',
+        '/[ÉÈÊË]/u'     =>   'E',
+        '/[óòôõºö]/u'   =>   'o',
+        '/[ÓÒÔÕÖ]/u'    =>   'O',
+        '/[úùûü]/u'     =>   'u',
+        '/[ÚÙÛÜ]/u'     =>   'U',
+        '/ç/'           =>   'c',
+        '/Ç/'           =>   'C',
+        '/ñ/'           =>   'n',
+        '/Ñ/'           =>   'N',
+        '/–/'           =>   '-', // UTF-8 hyphen to "normal" hyphen
+        '/[’‘‹›‚]/u'    =>   ' ', // Literally a single quote
+        '/[“”«»„]/u'    =>   ' ', // Double quote
+        '/ /'           =>   ' ', // nonbreaking space (equiv. to 0x160)
+    );
+    return preg_replace(array_keys($utf8), array_values($utf8), $text);
+}
+The rationale for the above functions (which I find way inefficient - the one below is better) is that a service that shall not be named apparently ran spelling checks and keyword recognition on the URLs.
+
+After losing a long time on a customer's paranoias, I found out they were not imagining things after all -- their SEO experts [I am definitely not one] reported that, say, converting "Viaggi Economy Perù" to viaggi-economy-peru "behaved better" than viaggi-economy-per (the previous "cleaning" removed UTF8 characters; Bogotà became bogot, Medellìn became medelln and so on).
+
+There were also some common misspellings that seemed to influence the results, and the only explanation that makes sense to me is that our URL are being unpacked, the words singled out, and used to drive God knows what ranking algorithms. And those algorithms apparently have been fed with UTF8-cleaned strings, so that "Perù" becomes "Peru" instead of "Per".
+
+In order to both keep UTF8 characters and replace some misspellings, the faster function below became the more accurate (?) function above. $dict needs to be hand tailored, of course.
+
+Previous answer
+
+A simple approach:
+
+// Remove all characters except A-Z, a-z, 0-9, dots, hyphens and spaces
+// Note that the hyphen must go last not to be confused with a range (A-Z)
+// and the dot, being special, is escaped with \
+$str = preg_replace('/[^A-Za-z0-9\. -]/', '', $str);
+
+// Replace sequences of spaces with hyphen
+$str = preg_replace('/  */', '-', $str);
+
+// The above means "a space, followed by a space repeated zero or more times"
+// (should be equivalent to / +/)
+
+// You may also want to try this alternative:
+$str = preg_replace('/\\s+/', '-', $str);
+
+// where \s+ means "zero or more whitespaces" (a space is not necessarily the
+// same as a whitespace) just to be sure and include everything
+Note that you might have to first urldecode() the URL, since %20 and + both are actually spaces - I mean, if you have "Never%20gonna%20give%20you%20up" you want it to become Never-gonna-give-you-up, not Never20gonna20give20you20up . You might not need it, but I thought I'd mention the possibility.
+
+So the finished function along with test cases:
+
+function hyphenize($string) {
+    return 
+    ## strtolower(
+          preg_replace(
+            array('#[\\s-]+#', '#[^A-Za-z0-9\. -]+#'),
+            array('-', ''),
+        ##     cleanString(
+              urldecode($string)
+        ##     )
+        )
+    ## )
+    ;
+}
+
+print implode("\n", array_map(
+    function($s) {
+            return $s . ' becomes ' . hyphenize($s);
+    },
+    array(
+    'Never%20gonna%20give%20you%20up',
+    "I'm not the man I was",
+    "'Légeresse', dit sa majesté",
+    )));
+
+
+Never%20gonna%20give%20you%20up    becomes  never-gonna-give-you-up
+I'm not the man I was              becomes  im-not-the-man-I-was
+'Légeresse', dit sa majesté        becomes  legeresse-dit-sa-majeste
+To handle UTF-8 I used a cleanString implementation found here. It could be simplified and wrapped inside the function here for performance.
+
+The function above also implements converting to lowercase - but that's a taste. The code to do so has been commented out.
+
+shareimprove this answer
+edited Jan 3 at 11:09
+
+answered Jan 1 '13 at 21:36
+
+lserni
+21.3k51540
+  	 	
+thanks, i'll save this too, i've upvoted it but sorry, the other guy got there first :( –  user115422 Jan 1 '13 at 21:47
+  	 	
+No problem :-), and he also did wrap the code in a function, which I did not. –  lserni Jan 1 '13 at 22:37
+1	 	
+You are missing a closing bracket in first block of code --> $str = preg_replace('/[^A-Za-z0-9\. -]/', '', $str); –  dmuk Mar 8 '14 at 18:28
+  	 	
+Thank you. Fixed. –  lserni Mar 8 '14 at 20:46
+add a comment
+up vote
+9
+down vote
+Here, check out this function:
+
+function seo_friendly_url($string){
+    $string = str_replace(array('[\', \']'), '', $string);
+    $string = preg_replace('/\[.*\]/U', '', $string);
+    $string = preg_replace('/&(amp;)?#?[a-z0-9]+;/i', '-', $string);
+    $string = htmlentities($string, ENT_COMPAT, 'utf-8');
+    $string = preg_replace('/&([a-z])(acute|uml|circ|grave|ring|cedil|slash|tilde|caron|lig|quot|rsquo);/i', '\\1', $string );
+    $string = preg_replace(array('/[^a-z0-9]/i', '/[-]+/') , '-', $string);
+    return strtolower(trim($string, '-'));
+}
+shareimprove this answer
+answered Jan 1 '13 at 21:35
+
+Jeffrey
+653311
+  	 	
+ill try this too! –  user115422 Jan 1 '13 at 21:36
+  	 	
+Entered comment in wrong place. –  dmuk Mar 8 '14 at 18:26 
+add a comment
+Not the answer you're looking for?	Browse other questions tagged php regex url slug or ask your own question.
+
+asked
+
+2 years ago
+
+viewed
+
+146488 times
+
+active
+
+2 months ago
+
+Looking for a job?
+Tech Analyst / Writer for Travel Tech Startup - NYC
+SIMPLENIGHT
+New York, NY
+phpapi
+Senior PHP Developer
+ADVFN
+Newport Beach, CA / remote
+phpjavascript
+Front End / JavaScript / WordPress GURU
+Wide Eye Creative
+Washington, DC / remote / relocation
+phpcss
+Web Developer-Apparel & Fashion Industry
+IguanaMed
+Chicago, IL
+phpmysql
+Get the weekly newsletter!
+
+Top questions and answers
+Important announcements
+Unanswered questions
+
+see an example newsletter
+
+Linked
+
+8 Regular Expression Sanitize (PHP)
+1 How to put minus after each word?
+1 How can I restrict some special characters only in PHP?
+0 ZF2 modify URL formating
+0 Display download button after user details are submitted via web form
+1 Selecting between quotes (") in SQL Server 2012
+0 How can i remove symbol from the title?
+0 How to delete wrong symbols and wrong length strings from string array?
+-1 how to remove special characters and url , link from a string in php
+1 How to strip tabs etc from outside of " (quotes) in php?
+see more linked questions…
+Related
+
+169 How does Stack Overflow generate its SEO-friendly URLs?
+2708 How can I get query string values in JavaScript?
+3 Creating Slugs from Titles?
+2 How to write regular expression to match only numbers, letters and dashes?
+26 Regex to remove all special characters from string?
+3 Manipulating a String: Removing special characters - Change all accented letters to non accented
+16 jQuery remove special characters from string and more
+3 Improve converting string to readable urls
+0 Javascript remove special characters from beginning and end of string
+0 How do you make a better seo friendly URL when there is UTF-8 characters and many space in between?
+Hot Network Questions
+
+Can a bird, previously at earth potential, get electrocuted by landing on a powerline at high-enough voltage due to the initial "equalization charge"?
+What did the paper money of the Ilkhanate look like?
+Damage type of quarterstaff thrusts
+Confectionery or confectionary when referring to a group of sweets
+IIs there a site that shows the current GPS position of active cruise ships?
+Why did Jango Fett have a son via cloning instead of through natural reproductive processes?
+Displaying states of machines – Overview site
+Which adjectives can be used to say to people they dressed nicely in a formal way?
+What is the purpose of hash (#) as a special character sign
+How to find a hole in a bicycle tire tube quickly
+Did the biblical apostle James visit Ireland?
+Additive combinatorics applications in algorithm design
+How can Windows dump the complete RAM in the hibernation file so fast?
+BitLocker Drive Encryption NOT secure from drive mapping on network
+Making Part of the Planet Completely Inaccessible
+Encrypt-then-MAC: Do I need to authenticate the IV?
+Assistance in understand IUPAC name for tetrahedrane
+How to explain brackets to young students
+Why is E.coli used as a model?
+Why does strace return so many execve calls with ENOENT return code?
+Is there any ethical issue which prevents me from paying high quality authors monetary compensation, to agree to write papers with me?
+How to add double line border to a page?
+Implement a Shape abstract class
+Can water falling from a tap follow a spiral path?
+tour help blog chat data legal privacy policy work here advertising info mobile contact us feedback
+TECHNOLOGY	LIFE / ARTS	CULTURE / RECREATION	SCIENCE	OTHER
+Stack Overflow
+Server Fault
+Super User
+Web Applications
+Ask Ubuntu
+Webmasters
+Game Development
+TeX - LaTeX
+Programmers
+Unix & Linux
+Ask Different (Apple)
+WordPress Development
+Geographic Information Systems
+Electrical Engineering
+Android Enthusiasts
+Information Security
+Database Administrators
+Drupal Answers
+SharePoint
+User Experience
+Mathematica
+Salesforce
+more (14)
+Photography
+Science Fiction & Fantasy
+Graphic Design
+Seasoned Advice (cooking)
+Home Improvement
+Personal Finance & Money
+Academia
+more (10)
+English Language & Usage
+Skeptics
+Mi Yodeya (Judaism)
+Travel
+Christianity
+Arqade (gaming)
+Bicycles
+Role-playing Games
+more (21)
+Mathematics
+Cross Validated (stats)
+Theoretical Computer Science
+Physics
+MathOverflow
+more (7)
+Stack Apps
+Meta Stack Exchange
+Area 51
+Stack Overflow Careers
+site design / logo © 2015 stack exchange inc; user contributions licensed under cc by-sa 3.0 with attribution required
+rev 2015.3.12.2382
+
+Stack Exchange sign up log in tour help  stack overflow careers  
+
+
+Stack Overflow
+Questions
+ 
+Tags
+ 
+Users
+ 
+Badges
+ 
+Unanswered
+ 
+Ask Question
+Take the 2-minute tour × Stack Overflow is a question and answer site for professional and enthusiast programmers. It's 100% free, no registration required.
+Remove all special characters from a string [duplicate]
+
+
+up vote
+43
+down vote
+favorite
+18
+Possible Duplicate:
+Regular Expression Sanitize (PHP)
+I am facing an issue with URLs, I want to be able to convert titles that could contain anything and have them stripped of all special characters so they only have letters and numbers and of course I would like to replace spaces with hyphens.
+
+How would this be done? I've heard a lot about regular expressions (regex) being used...
+
+php regex url slug
+shareimprove this question
+edited Jan 1 '13 at 21:51
+
+hakre
+112k18140294	
+asked Jan 1 '13 at 21:31
+
+user115422
+81641224
+marked as duplicate by hakre, PeeHaa, tereško, Kate Gregory, Brooks Moses Jan 1 '13 at 23:53
+
+This question has been asked before and already has an answer. If those answers do not fully address your question, please ask a new question.
+
+1	 	
+Which question is this a duplicate of? –  starbeamrainbowlabs Jun 25 '14 at 9:47
+add a comment
+3 Answers
+activeoldestvotes
+up vote
+162
+down vote
+accepted
+Easy peasy:
+
+function clean($string) {
+   $string = str_replace(' ', '-', $string); // Replaces all spaces with hyphens.
+
+   return preg_replace('/[^A-Za-z0-9\-]/', '', $string); // Removes special chars.
+}
+Usage:
+
+echo clean('a|"bc!@£de^&$f g');
+Will output: abcdef-g
+
+Edit:
+
+Hey, just a quick question, how can I prevent multiple hyphens from being next to each other? and have them replaced with just 1? Thanks in advance!
+function clean($string) {
+   $string = str_replace(' ', '-', $string); // Replaces all spaces with hyphens.
+   $string = preg_replace('/[^A-Za-z0-9\-]/', '', $string); // Removes special chars.
+
+   return preg_replace('/-+/', '-', $string); // Replaces multiple hyphens with single one.
+}
+shareimprove this answer
+edited Jun 11 '14 at 23:58
+
+answered Jan 1 '13 at 21:33
+
+Terry Harvey
+2,4051614
+1	 	
+thanks, let me give it a shot! –  user115422 Jan 1 '13 at 21:34
+  	 	
+He was specifically asking for spaces to be replaced with hyphens... –  Jeffrey Jan 1 '13 at 21:36 
+  	 	
+@Artaex Media Sorry, missed that part! –  Terry Harvey Jan 1 '13 at 21:36
+1	 	
+ill mark this as answer, thanks a lot! –  user115422 Jan 1 '13 at 21:38
+1	 	
+PERFECT! thanks a million! –  user115422 Jan 1 '13 at 21:59
+show 14 more comments
+
+up vote
+20
+down vote
+Update
+
+The solution below has a "SEO friendlier" version:
+Suupaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbccccccccccccccccccccccccccccccccccccccccccccccccccccccccbbbbbbbbbbbbbbbbbbbbbbbbbbaaaaaaaaaaaaaaaaaaapuus
+function hyphenize($string) {
+    $dict = array(
+        "I'm"      => "I am",
+        "thier"    => "their",
+    );
+    return strtolower(
+        preg_replace(
+          array( '#[\\s-]+#', '#[^A-Za-z0-9\. -]+#' ),
+          array( '-', '' ),
+          // the full cleanString() can be download from http://www.unexpectedit.com/php/php-clean-string-of-utf8-chars-convert-to-similar-ascii-char
+          cleanString(
+              str_replace( // preg_replace to support more complicated replacements
+                  array_keys($dict),
+                  array_values($dict),
+                  urldecode($string)
+              )
+          )
+        )
+    );
+}
+
+function cleanString($text) {
+    $utf8 = array(
+        '/[áàâãªä]/u'   =>   'a',
+        '/[ÁÀÂÃÄ]/u'    =>   'A',
+        '/[ÍÌÎÏ]/u'     =>   'I',
+        '/[íìîï]/u'     =>   'i',
+        '/[éèêë]/u'     =>   'e',
+        '/[ÉÈÊË]/u'     =>   'E',
+        '/[óòôõºö]/u'   =>   'o',
+        '/[ÓÒÔÕÖ]/u'    =>   'O',
+        '/[úùûü]/u'     =>   'u',
+        '/[ÚÙÛÜ]/u'     =>   'U',
+        '/ç/'           =>   'c',
+        '/Ç/'           =>   'C',
+        '/ñ/'           =>   'n',
+        '/Ñ/'           =>   'N',
+        '/–/'           =>   '-', // UTF-8 hyphen to "normal" hyphen
+        '/[’‘‹›‚]/u'    =>   ' ', // Literally a single quote
+        '/[“”«»„]/u'    =>   ' ', // Double quote
+        '/ /'           =>   ' ', // nonbreaking space (equiv. to 0x160)
+    );
+    return preg_replace(array_keys($utf8), array_values($utf8), $text);
+}
+The rationale for the above functions (which I find way inefficient - the one below is better) is that a service that shall not be named apparently ran spelling checks and keyword recognition on the URLs.
+
+After losing a long time on a customer's paranoias, I found out they were not imagining things after all -- their SEO experts [I am definitely not one] reported that, say, converting "Viaggi Economy Perù" to viaggi-economy-peru "behaved better" than viaggi-economy-per (the previous "cleaning" removed UTF8 characters; Bogotà became bogot, Medellìn became medelln and so on).
+
+There were also some common misspellings that seemed to influence the results, and the only explanation that makes sense to me is that our URL are being unpacked, the words singled out, and used to drive God knows what ranking algorithms. And those algorithms apparently have been fed with UTF8-cleaned strings, so that "Perù" becomes "Peru" instead of "Per".
+
+In order to both keep UTF8 characters and replace some misspellings, the faster function below became the more accurate (?) function above. $dict needs to be hand tailored, of course.
+
+Previous answer
+
+A simple approach:
+
+// Remove all characters except A-Z, a-z, 0-9, dots, hyphens and spaces
+// Note that the hyphen must go last not to be confused with a range (A-Z)
+// and the dot, being special, is escaped with \
+$str = preg_replace('/[^A-Za-z0-9\. -]/', '', $str);
+
+// Replace sequences of spaces with hyphen
+$str = preg_replace('/  */', '-', $str);
+
+// The above means "a space, followed by a space repeated zero or more times"
+// (should be equivalent to / +/)
+
+// You may also want to try this alternative:
+$str = preg_replace('/\\s+/', '-', $str);
+
+// where \s+ means "zero or more whitespaces" (a space is not necessarily the
+// same as a whitespace) just to be sure and include everything
+Note that you might have to first urldecode() the URL, since %20 and + both are actually spaces - I mean, if you have "Never%20gonna%20give%20you%20up" you want it to become Never-gonna-give-you-up, not Never20gonna20give20you20up . You might not need it, but I thought I'd mention the possibility.
+
+So the finished function along with test cases:
+
+function hyphenize($string) {
+    return 
+    ## strtolower(
+          preg_replace(
+            array('#[\\s-]+#', '#[^A-Za-z0-9\. -]+#'),
+            array('-', ''),
+        ##     cleanString(
+              urldecode($string)
+        ##     )
+        )
+    ## )
+    ;
+}
+
+print implode("\n", array_map(
+    function($s) {
+            return $s . ' becomes ' . hyphenize($s);
+    },
+    array(
+    'Never%20gonna%20give%20you%20up',
+    "I'm not the man I was",
+    "'Légeresse', dit sa majesté",
+    )));
+
+
+Never%20gonna%20give%20you%20up    becomes  never-gonna-give-you-up
+I'm not the man I was              becomes  im-not-the-man-I-was
+'Légeresse', dit sa majesté        becomes  legeresse-dit-sa-majeste
+To handle UTF-8 I used a cleanString implementation found here. It could be simplified and wrapped inside the function here for performance.
+
+The function above also implements converting to lowercase - but that's a taste. The code to do so has been commented out.
+
+shareimprove this answer
+edited Jan 3 at 11:09
+
+answered Jan 1 '13 at 21:36
+
+lserni
+21.3k51540
+  	 	
+thanks, i'll save this too, i've upvoted it but sorry, the other guy got there first :( –  user115422 Jan 1 '13 at 21:47
+  	 	
+No problem :-), and he also did wrap the code in a function, which I did not. –  lserni Jan 1 '13 at 22:37
+1	 	
+You are missing a closing bracket in first block of code --> $str = preg_replace('/[^A-Za-z0-9\. -]/', '', $str); –  dmuk Mar 8 '14 at 18:28
+  	 	
+Thank you. Fixed. –  lserni Mar 8 '14 at 20:46
+add a comment
+up vote
+9
+down vote
+Here, check out this function:
+
+function seo_friendly_url($string){
+    $string = str_replace(array('[\', \']'), '', $string);
+    $string = preg_replace('/\[.*\]/U', '', $string);
+    $string = preg_replace('/&(amp;)?#?[a-z0-9]+;/i', '-', $string);
+    $string = htmlentities($string, ENT_COMPAT, 'utf-8');
+    $string = preg_replace('/&([a-z])(acute|uml|circ|grave|ring|cedil|slash|tilde|caron|lig|quot|rsquo);/i', '\\1', $string );
+    $string = preg_replace(array('/[^a-z0-9]/i', '/[-]+/') , '-', $string);
+    return strtolower(trim($string, '-'));
+}
+shareimprove this answer
+answered Jan 1 '13 at 21:35
+
+Jeffrey
+653311
+  	 	
+ill try this too! –  user115422 Jan 1 '13 at 21:36
+  	 	
+Entered comment in wrong place. –  dmuk Mar 8 '14 at 18:26 
+add a comment
+Not the answer you're looking for?	Browse other questions tagged php regex url slug or ask your own question.
+
+asked
+
+2 years ago
+
+viewed
+
+146488 times
+
+active
+
+2 months ago
+
+Looking for a job?
+Tech Analyst / Writer for Travel Tech Startup - NYC
+SIMPLENIGHT
+New York, NY
+phpapi
+Senior PHP Developer
+ADVFN
+Newport Beach, CA / remote
+phpjavascript
+Front End / JavaScript / WordPress GURU
+Wide Eye Creative
+Washington, DC / remote / relocation
+phpcss
+Web Developer-Apparel & Fashion Industry
+IguanaMed
+Chicago, IL
+phpmysql
+Get the weekly newsletter!
+
+Top questions and answers
+Important announcements
+Unanswered questions
+
+see an example newsletter
+
+Linked
+
+8 Regular Expression Sanitize (PHP)
+1 How to put minus after each word?
+1 How can I restrict some special characters only in PHP?
+0 ZF2 modify URL formating
+0 Display download button after user details are submitted via web form
+1 Selecting between quotes (") in SQL Server 2012
+0 How can i remove symbol from the title?
+0 How to delete wrong symbols and wrong length strings from string array?
+-1 how to remove special characters and url , link from a string in php
+1 How to strip tabs etc from outside of " (quotes) in php?
+see more linked questions…
+Related
+
+169 How does Stack Overflow generate its SEO-friendly URLs?
+2708 How can I get query string values in JavaScript?
+3 Creating Slugs from Titles?
+2 How to write regular expression to match only numbers, letters and dashes?
+26 Regex to remove all special characters from string?
+3 Manipulating a String: Removing special characters - Change all accented letters to non accented
+16 jQuery remove special characters from string and more
+3 Improve converting string to readable urls
+0 Javascript remove special characters from beginning and end of string
+0 How do you make a better seo friendly URL when there is UTF-8 characters and many space in between?
+Hot Network Questions
+
+Can a bird, previously at earth potential, get electrocuted by landing on a powerline at high-enough voltage due to the initial "equalization charge"?
+What did the paper money of the Ilkhanate look like?
+Damage type of quarterstaff thrusts
+Confectionery or confectionary when referring to a group of sweets
+IIs there a site that shows the current GPS position of active cruise ships?
+Why did Jango Fett have a son via cloning instead of through natural reproductive processes?
+Displaying states of machines – Overview site
+Which adjectives can be used to say to people they dressed nicely in a formal way?
+What is the purpose of hash (#) as a special character sign
+How to find a hole in a bicycle tire tube quickly
+Did the biblical apostle James visit Ireland?
+Additive combinatorics applications in algorithm design
+How can Windows dump the complete RAM in the hibernation file so fast?
+BitLocker Drive Encryption NOT secure from drive mapping on network
+Making Part of the Planet Completely Inaccessible
+Encrypt-then-MAC: Do I need to authenticate the IV?
+Assistance in understand IUPAC name for tetrahedrane
+How to explain brackets to young students
+Why is E.coli used as a model?
+Why does strace return so many execve calls with ENOENT return code?
+Is there any ethical issue which prevents me from paying high quality authors monetary compensation, to agree to write papers with me?
+How to add double line border to a page?
+Implement a Shape abstract class
+Can water falling from a tap follow a spiral path?
+tour help blog chat data legal privacy policy work here advertising info mobile contact us feedback
+TECHNOLOGY	LIFE / ARTS	CULTURE / RECREATION	SCIENCE	OTHER
+Stack Overflow
+Server Fault
+Super User
+Web Applications
+Ask Ubuntu
+Webmasters
+Game Development
+TeX - LaTeX
+Programmers
+Unix & Linux
+Ask Different (Apple)
+WordPress Development
+Geographic Information Systems
+Electrical Engineering
+Android Enthusiasts
+Information Security
+Database Administrators
+Drupal Answers
+SharePoint
+User Experience
+Mathematica
+Salesforce
+more (14)
+Photography
+Science Fiction & Fantasy
+Graphic Design
+Seasoned Advice (cooking)
+Home Improvement
+Personal Finance & Money
+Academia
+more (10)
+English Language & Usage
+Skeptics
+Mi Yodeya (Judaism)
+Travel
+Christianity
+Arqade (gaming)
+Bicycles
+Role-playing Games
+more (21)
+Mathematics
+Cross Validated (stats)
+Theoretical Computer Science
+Physics
+MathOverflow
+more (7)
+Stack Apps
+Meta Stack Exchange
+Area 51
+Stack Overflow Careers
+site design / logo © 2015 stack exchange inc; user contributions licensed under cc by-sa 3.0 with attribution required
+rev 2015.3.12.2382
+
+Stack Exchange sign up log in tour help  stack overflow careers  
+
+
+Stack Overflow
+Questions
+ 
+Tags
+ 
+Users
+ 
+Badges
+ 
+Unanswered
+ 
+Ask Question
+Take the 2-minute tour × Stack Overflow is a question and answer site for professional and enthusiast programmers. It's 100% free, no registration required.
+Remove all special characters from a string [duplicate]
+
+
+up vote
+43
+down vote
+favorite
+18
+Possible Duplicate:
+Regular Expression Sanitize (PHP)
+I am facing an issue with URLs, I want to be able to convert titles that could contain anything and have them stripped of all special characters so they only have letters and numbers and of course I would like to replace spaces with hyphens.
+
+How would this be done? I've heard a lot about regular expressions (regex) being used...
+
+php regex url slug
+shareimprove this question
+edited Jan 1 '13 at 21:51
+
+hakre
+112k18140294	
+asked Jan 1 '13 at 21:31
+
+user115422
+81641224
+marked as duplicate by hakre, PeeHaa, tereško, Kate Gregory, Brooks Moses Jan 1 '13 at 23:53
+
+This question has been asked before and already has an answer. If those answers do not fully address your question, please ask a new question.
+
+1	 	
+Which question is this a duplicate of? –  starbeamrainbowlabs Jun 25 '14 at 9:47
+add a comment
+3 Answers
+activeoldestvotes
+up vote
+162
+down vote
+accepted
+Easy peasy:
+
+function clean($string) {
+   $string = str_replace(' ', '-', $string); // Replaces all spaces with hyphens.
+
+   return preg_replace('/[^A-Za-z0-9\-]/', '', $string); // Removes special chars.
+}
+Usage:
+
+echo clean('a|"bc!@£de^&$f g');
+Will output: abcdef-g
+
+Edit:
+
+Hey, just a quick question, how can I prevent multiple hyphens from being next to each other? and have them replaced with just 1? Thanks in advance!
+function clean($string) {
+   $string = str_replace(' ', '-', $string); // Replaces all spaces with hyphens.
+   $string = preg_replace('/[^A-Za-z0-9\-]/', '', $string); // Removes special chars.
+
+   return preg_replace('/-+/', '-', $string); // Replaces multiple hyphens with single one.
+}
+shareimprove this answer
+edited Jun 11 '14 at 23:58
+
+answered Jan 1 '13 at 21:33
+
+Terry Harvey
+2,4051614
+1	 	
+thanks, let me give it a shot! –  user115422 Jan 1 '13 at 21:34
+  	 	
+He was specifically asking for spaces to be replaced with hyphens... –  Jeffrey Jan 1 '13 at 21:36 
+  	 	
+@Artaex Media Sorry, missed that part! –  Terry Harvey Jan 1 '13 at 21:36
+1	 	
+ill mark this as answer, thanks a lot! –  user115422 Jan 1 '13 at 21:38
+1	 	
+PERFECT! thanks a million! –  user115422 Jan 1 '13 at 21:59
+show 14 more comments
+
+up vote
+20
+down vote
+Update
+
+The solution below has a "SEO friendlier" version:
+Suupaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbccccccccccccccccccccccccccccccccccccccccccccccccccccccccbbbbbbbbbbbbbbbbbbbbbbbbbbaaaaaaaaaaaaaaaaaaapuus
+function hyphenize($string) {
+    $dict = array(
+        "I'm"      => "I am",
+        "thier"    => "their",
+    );
+    return strtolower(
+        preg_replace(
+          array( '#[\\s-]+#', '#[^A-Za-z0-9\. -]+#' ),
+          array( '-', '' ),
+          // the full cleanString() can be download from http://www.unexpectedit.com/php/php-clean-string-of-utf8-chars-convert-to-similar-ascii-char
+          cleanString(
+              str_replace( // preg_replace to support more complicated replacements
+                  array_keys($dict),
+                  array_values($dict),
+                  urldecode($string)
+              )
+          )
+        )
+    );
+}
+
+function cleanString($text) {
+    $utf8 = array(
+        '/[áàâãªä]/u'   =>   'a',
+        '/[ÁÀÂÃÄ]/u'    =>   'A',
+        '/[ÍÌÎÏ]/u'     =>   'I',
+        '/[íìîï]/u'     =>   'i',
+        '/[éèêë]/u'     =>   'e',
+        '/[ÉÈÊË]/u'     =>   'E',
+        '/[óòôõºö]/u'   =>   'o',
+        '/[ÓÒÔÕÖ]/u'    =>   'O',
+        '/[úùûü]/u'     =>   'u',
+        '/[ÚÙÛÜ]/u'     =>   'U',
+        '/ç/'           =>   'c',
+        '/Ç/'           =>   'C',
+        '/ñ/'           =>   'n',
+        '/Ñ/'           =>   'N',
+        '/–/'           =>   '-', // UTF-8 hyphen to "normal" hyphen
+        '/[’‘‹›‚]/u'    =>   ' ', // Literally a single quote
+        '/[“”«»„]/u'    =>   ' ', // Double quote
+        '/ /'           =>   ' ', // nonbreaking space (equiv. to 0x160)
+    );
+    return preg_replace(array_keys($utf8), array_values($utf8), $text);
+}
+The rationale for the above functions (which I find way inefficient - the one below is better) is that a service that shall not be named apparently ran spelling checks and keyword recognition on the URLs.
+
+After losing a long time on a customer's paranoias, I found out they were not imagining things after all -- their SEO experts [I am definitely not one] reported that, say, converting "Viaggi Economy Perù" to viaggi-economy-peru "behaved better" than viaggi-economy-per (the previous "cleaning" removed UTF8 characters; Bogotà became bogot, Medellìn became medelln and so on).
+
+There were also some common misspellings that seemed to influence the results, and the only explanation that makes sense to me is that our URL are being unpacked, the words singled out, and used to drive God knows what ranking algorithms. And those algorithms apparently have been fed with UTF8-cleaned strings, so that "Perù" becomes "Peru" instead of "Per".
+
+In order to both keep UTF8 characters and replace some misspellings, the faster function below became the more accurate (?) function above. $dict needs to be hand tailored, of course.
+
+Previous answer
+
+A simple approach:
+
+// Remove all characters except A-Z, a-z, 0-9, dots, hyphens and spaces
+// Note that the hyphen must go last not to be confused with a range (A-Z)
+// and the dot, being special, is escaped with \
+$str = preg_replace('/[^A-Za-z0-9\. -]/', '', $str);
+
+// Replace sequences of spaces with hyphen
+$str = preg_replace('/  */', '-', $str);
+
+// The above means "a space, followed by a space repeated zero or more times"
+// (should be equivalent to / +/)
+
+// You may also want to try this alternative:
+$str = preg_replace('/\\s+/', '-', $str);
+
+// where \s+ means "zero or more whitespaces" (a space is not necessarily the
+// same as a whitespace) just to be sure and include everything
+Note that you might have to first urldecode() the URL, since %20 and + both are actually spaces - I mean, if you have "Never%20gonna%20give%20you%20up" you want it to become Never-gonna-give-you-up, not Never20gonna20give20you20up . You might not need it, but I thought I'd mention the possibility.
+
+So the finished function along with test cases:
+
+function hyphenize($string) {
+    return 
+    ## strtolower(
+          preg_replace(
+            array('#[\\s-]+#', '#[^A-Za-z0-9\. -]+#'),
+            array('-', ''),
+        ##     cleanString(
+              urldecode($string)
+        ##     )
+        )
+    ## )
+    ;
+}
+
+print implode("\n", array_map(
+    function($s) {
+            return $s . ' becomes ' . hyphenize($s);
+    },
+    array(
+    'Never%20gonna%20give%20you%20up',
+    "I'm not the man I was",
+    "'Légeresse', dit sa majesté",
+    )));
+
+
+Never%20gonna%20give%20you%20up    becomes  never-gonna-give-you-up
+I'm not the man I was              becomes  im-not-the-man-I-was
+'Légeresse', dit sa majesté        becomes  legeresse-dit-sa-majeste
+To handle UTF-8 I used a cleanString implementation found here. It could be simplified and wrapped inside the function here for performance.
+
+The function above also implements converting to lowercase - but that's a taste. The code to do so has been commented out.
+
+shareimprove this answer
+edited Jan 3 at 11:09
+
+answered Jan 1 '13 at 21:36
+
+lserni
+21.3k51540
+  	 	
+thanks, i'll save this too, i've upvoted it but sorry, the other guy got there first :( –  user115422 Jan 1 '13 at 21:47
+  	 	
+No problem :-), and he also did wrap the code in a function, which I did not. –  lserni Jan 1 '13 at 22:37
+1	 	
+You are missing a closing bracket in first block of code --> $str = preg_replace('/[^A-Za-z0-9\. -]/', '', $str); –  dmuk Mar 8 '14 at 18:28
+  	 	
+Thank you. Fixed. –  lserni Mar 8 '14 at 20:46
+add a comment
+up vote
+9
+down vote
+Here, check out this function:
+
+function seo_friendly_url($string){
+    $string = str_replace(array('[\', \']'), '', $string);
+    $string = preg_replace('/\[.*\]/U', '', $string);
+    $string = preg_replace('/&(amp;)?#?[a-z0-9]+;/i', '-', $string);
+    $string = htmlentities($string, ENT_COMPAT, 'utf-8');
+    $string = preg_replace('/&([a-z])(acute|uml|circ|grave|ring|cedil|slash|tilde|caron|lig|quot|rsquo);/i', '\\1', $string );
+    $string = preg_replace(array('/[^a-z0-9]/i', '/[-]+/') , '-', $string);
+    return strtolower(trim($string, '-'));
+}
+shareimprove this answer
+answered Jan 1 '13 at 21:35
+
+Jeffrey
+653311
+  	 	
+ill try this too! –  user115422 Jan 1 '13 at 21:36
+  	 	
+Entered comment in wrong place. –  dmuk Mar 8 '14 at 18:26 
+add a comment
+Not the answer you're looking for?	Browse other questions tagged php regex url slug or ask your own question.
+
+asked
+
+2 years ago
+
+viewed
+
+146488 times
+
+active
+
+2 months ago
+
+Looking for a job?
+Tech Analyst / Writer for Travel Tech Startup - NYC
+SIMPLENIGHT
+New York, NY
+phpapi
+Senior PHP Developer
+ADVFN
+Newport Beach, CA / remote
+phpjavascript
+Front End / JavaScript / WordPress GURU
+Wide Eye Creative
+Washington, DC / remote / relocation
+phpcss
+Web Developer-Apparel & Fashion Industry
+IguanaMed
+Chicago, IL
+phpmysql
+Get the weekly newsletter!
+
+Top questions and answers
+Important announcements
+Unanswered questions
+
+see an example newsletter
+
+Linked
+
+8 Regular Expression Sanitize (PHP)
+1 How to put minus after each word?
+1 How can I restrict some special characters only in PHP?
+0 ZF2 modify URL formating
+0 Display download button after user details are submitted via web form
+1 Selecting between quotes (") in SQL Server 2012
+0 How can i remove symbol from the title?
+0 How to delete wrong symbols and wrong length strings from string array?
+-1 how to remove special characters and url , link from a string in php
+1 How to strip tabs etc from outside of " (quotes) in php?
+see more linked questions…
+Related
+
+169 How does Stack Overflow generate its SEO-friendly URLs?
+2708 How can I get query string values in JavaScript?
+3 Creating Slugs from Titles?
+2 How to write regular expression to match only numbers, letters and dashes?
+26 Regex to remove all special characters from string?
+3 Manipulating a String: Removing special characters - Change all accented letters to non accented
+16 jQuery remove special characters from string and more
+3 Improve converting string to readable urls
+0 Javascript remove special characters from beginning and end of string
+0 How do you make a better seo friendly URL when there is UTF-8 characters and many space in between?
+Hot Network Questions
+
+Can a bird, previously at earth potential, get electrocuted by landing on a powerline at high-enough voltage due to the initial "equalization charge"?
+What did the paper money of the Ilkhanate look like?
+Damage type of quarterstaff thrusts
+Confectionery or confectionary when referring to a group of sweets
+IIs there a site that shows the current GPS position of active cruise ships?
+Why did Jango Fett have a son via cloning instead of through natural reproductive processes?
+Displaying states of machines – Overview site
+Which adjectives can be used to say to people they dressed nicely in a formal way?
+What is the purpose of hash (#) as a special character sign
+How to find a hole in a bicycle tire tube quickly
+Did the biblical apostle James visit Ireland?
+Additive combinatorics applications in algorithm design
+How can Windows dump the complete RAM in the hibernation file so fast?
+BitLocker Drive Encryption NOT secure from drive mapping on network
+Making Part of the Planet Completely Inaccessible
+Encrypt-then-MAC: Do I need to authenticate the IV?
+Assistance in understand IUPAC name for tetrahedrane
+How to explain brackets to young students
+Why is E.coli used as a model?
+Why does strace return so many execve calls with ENOENT return code?
+Is there any ethical issue which prevents me from paying high quality authors monetary compensation, to agree to write papers with me?
+How to add double line border to a page?
+Implement a Shape abstract class
+Can water falling from a tap follow a spiral path?
+tour help blog chat data legal privacy policy work here advertising info mobile contact us feedback
+TECHNOLOGY	LIFE / ARTS	CULTURE / RECREATION	SCIENCE	OTHER
+Stack Overflow
+Server Fault
+Super User
+Web Applications
+Ask Ubuntu
+Webmasters
+Game Development
+TeX - LaTeX
+Programmers
+Unix & Linux
+Ask Different (Apple)
+WordPress Development
+Geographic Information Systems
+Electrical Engineering
+Android Enthusiasts
+Information Security
+Database Administrators
+Drupal Answers
+SharePoint
+User Experience
+Mathematica
+Salesforce
+more (14)
+Photography
+Science Fiction & Fantasy
+Graphic Design
+Seasoned Advice (cooking)
+Home Improvement
+Personal Finance & Money
+Academia
+more (10)
+English Language & Usage
+Skeptics
+Mi Yodeya (Judaism)
+Travel
+Christianity
+Arqade (gaming)
+Bicycles
+Role-playing Games
+more (21)
+Mathematics
+Cross Validated (stats)
+Theoretical Computer Science
+Physics
+MathOverflow
+more (7)
+Stack Apps
+Meta Stack Exchange
+Area 51
+Stack Overflow Careers
+site design / logo © 2015 stack exchange inc; user contributions licensed under cc by-sa 3.0 with attribution required
+rev 2015.3.12.2382
+
+Stack Exchange sign up log in tour help  stack overflow careers  
+
+
+Stack Overflow
+Questions
+ 
+Tags
+ 
+Users
+ 
+Badges
+ 
+Unanswered
+ 
+Ask Question
+Take the 2-minute tour × Stack Overflow is a question and answer site for professional and enthusiast programmers. It's 100% free, no registration required.
+Remove all special characters from a string [duplicate]
+
+
+up vote
+43
+down vote
+favorite
+18
+Possible Duplicate:
+Regular Expression Sanitize (PHP)
+I am facing an issue with URLs, I want to be able to convert titles that could contain anything and have them stripped of all special characters so they only have letters and numbers and of course I would like to replace spaces with hyphens.
+
+How would this be done? I've heard a lot about regular expressions (regex) being used...
+
+php regex url slug
+shareimprove this question
+edited Jan 1 '13 at 21:51
+
+hakre
+112k18140294	
+asked Jan 1 '13 at 21:31
+
+user115422
+81641224
+marked as duplicate by hakre, PeeHaa, tereško, Kate Gregory, Brooks Moses Jan 1 '13 at 23:53
+
+This question has been asked before and already has an answer. If those answers do not fully address your question, please ask a new question.
+
+1	 	
+Which question is this a duplicate of? –  starbeamrainbowlabs Jun 25 '14 at 9:47
+add a comment
+3 Answers
+activeoldestvotes
+up vote
+162
+down vote
+accepted
+Easy peasy:
+
+function clean($string) {
+   $string = str_replace(' ', '-', $string); // Replaces all spaces with hyphens.
+
+   return preg_replace('/[^A-Za-z0-9\-]/', '', $string); // Removes special chars.
+}
+Usage:
+
+echo clean('a|"bc!@£de^&$f g');
+Will output: abcdef-g
+
+Edit:
+
+Hey, just a quick question, how can I prevent multiple hyphens from being next to each other? and have them replaced with just 1? Thanks in advance!
+function clean($string) {
+   $string = str_replace(' ', '-', $string); // Replaces all spaces with hyphens.
+   $string = preg_replace('/[^A-Za-z0-9\-]/', '', $string); // Removes special chars.
+
+   return preg_replace('/-+/', '-', $string); // Replaces multiple hyphens with single one.
+}
+shareimprove this answer
+edited Jun 11 '14 at 23:58
+
+answered Jan 1 '13 at 21:33
+
+Terry Harvey
+2,4051614
+1	 	
+thanks, let me give it a shot! –  user115422 Jan 1 '13 at 21:34
+  	 	
+He was specifically asking for spaces to be replaced with hyphens... –  Jeffrey Jan 1 '13 at 21:36 
+  	 	
+@Artaex Media Sorry, missed that part! –  Terry Harvey Jan 1 '13 at 21:36
+1	 	
+ill mark this as answer, thanks a lot! –  user115422 Jan 1 '13 at 21:38
+1	 	
+PERFECT! thanks a million! –  user115422 Jan 1 '13 at 21:59
+show 14 more comments
+
+up vote
+20
+down vote
+Update
+
+The solution below has a "SEO friendlier" version:
+Suupaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbccccccccccccccccccccccccccccccccccccccccccccccccccccccccbbbbbbbbbbbbbbbbbbbbbbbbbbaaaaaaaaaaaaaaaaaaapuus
+function hyphenize($string) {
+    $dict = array(
+        "I'm"      => "I am",
+        "thier"    => "their",
+    );
+    return strtolower(
+        preg_replace(
+          array( '#[\\s-]+#', '#[^A-Za-z0-9\. -]+#' ),
+          array( '-', '' ),
+          // the full cleanString() can be download from http://www.unexpectedit.com/php/php-clean-string-of-utf8-chars-convert-to-similar-ascii-char
+          cleanString(
+              str_replace( // preg_replace to support more complicated replacements
+                  array_keys($dict),
+                  array_values($dict),
+                  urldecode($string)
+              )
+          )
+        )
+    );
+}
+
+function cleanString($text) {
+    $utf8 = array(
+        '/[áàâãªä]/u'   =>   'a',
+        '/[ÁÀÂÃÄ]/u'    =>   'A',
+        '/[ÍÌÎÏ]/u'     =>   'I',
+        '/[íìîï]/u'     =>   'i',
+        '/[éèêë]/u'     =>   'e',
+        '/[ÉÈÊË]/u'     =>   'E',
+        '/[óòôõºö]/u'   =>   'o',
+        '/[ÓÒÔÕÖ]/u'    =>   'O',
+        '/[úùûü]/u'     =>   'u',
+        '/[ÚÙÛÜ]/u'     =>   'U',
+        '/ç/'           =>   'c',
+        '/Ç/'           =>   'C',
+        '/ñ/'           =>   'n',
+        '/Ñ/'           =>   'N',
+        '/–/'           =>   '-', // UTF-8 hyphen to "normal" hyphen
+        '/[’‘‹›‚]/u'    =>   ' ', // Literally a single quote
+        '/[“”«»„]/u'    =>   ' ', // Double quote
+        '/ /'           =>   ' ', // nonbreaking space (equiv. to 0x160)
+    );
+    return preg_replace(array_keys($utf8), array_values($utf8), $text);
+}
+The rationale for the above functions (which I find way inefficient - the one below is better) is that a service that shall not be named apparently ran spelling checks and keyword recognition on the URLs.
+
+After losing a long time on a customer's paranoias, I found out they were not imagining things after all -- their SEO experts [I am definitely not one] reported that, say, converting "Viaggi Economy Perù" to viaggi-economy-peru "behaved better" than viaggi-economy-per (the previous "cleaning" removed UTF8 characters; Bogotà became bogot, Medellìn became medelln and so on).
+
+There were also some common misspellings that seemed to influence the results, and the only explanation that makes sense to me is that our URL are being unpacked, the words singled out, and used to drive God knows what ranking algorithms. And those algorithms apparently have been fed with UTF8-cleaned strings, so that "Perù" becomes "Peru" instead of "Per".
+
+In order to both keep UTF8 characters and replace some misspellings, the faster function below became the more accurate (?) function above. $dict needs to be hand tailored, of course.
+
+Previous answer
+
+A simple approach:
+
+// Remove all characters except A-Z, a-z, 0-9, dots, hyphens and spaces
+// Note that the hyphen must go last not to be confused with a range (A-Z)
+// and the dot, being special, is escaped with \
+$str = preg_replace('/[^A-Za-z0-9\. -]/', '', $str);
+
+// Replace sequences of spaces with hyphen
+$str = preg_replace('/  */', '-', $str);
+
+// The above means "a space, followed by a space repeated zero or more times"
+// (should be equivalent to / +/)
+
+// You may also want to try this alternative:
+$str = preg_replace('/\\s+/', '-', $str);
+
+// where \s+ means "zero or more whitespaces" (a space is not necessarily the
+// same as a whitespace) just to be sure and include everything
+Note that you might have to first urldecode() the URL, since %20 and + both are actually spaces - I mean, if you have "Never%20gonna%20give%20you%20up" you want it to become Never-gonna-give-you-up, not Never20gonna20give20you20up . You might not need it, but I thought I'd mention the possibility.
+
+So the finished function along with test cases:
+
+function hyphenize($string) {
+    return 
+    ## strtolower(
+          preg_replace(
+            array('#[\\s-]+#', '#[^A-Za-z0-9\. -]+#'),
+            array('-', ''),
+        ##     cleanString(
+              urldecode($string)
+        ##     )
+        )
+    ## )
+    ;
+}
+
+print implode("\n", array_map(
+    function($s) {
+            return $s . ' becomes ' . hyphenize($s);
+    },
+    array(
+    'Never%20gonna%20give%20you%20up',
+    "I'm not the man I was",
+    "'Légeresse', dit sa majesté",
+    )));
+
+
+Never%20gonna%20give%20you%20up    becomes  never-gonna-give-you-up
+I'm not the man I was              becomes  im-not-the-man-I-was
+'Légeresse', dit sa majesté        becomes  legeresse-dit-sa-majeste
+To handle UTF-8 I used a cleanString implementation found here. It could be simplified and wrapped inside the function here for performance.
+
+The function above also implements converting to lowercase - but that's a taste. The code to do so has been commented out.
+
+shareimprove this answer
+edited Jan 3 at 11:09
+
+answered Jan 1 '13 at 21:36
+
+lserni
+21.3k51540
+  	 	
+thanks, i'll save this too, i've upvoted it but sorry, the other guy got there first :( –  user115422 Jan 1 '13 at 21:47
+  	 	
+No problem :-), and he also did wrap the code in a function, which I did not. –  lserni Jan 1 '13 at 22:37
+1	 	
+You are missing a closing bracket in first block of code --> $str = preg_replace('/[^A-Za-z0-9\. -]/', '', $str); –  dmuk Mar 8 '14 at 18:28
+  	 	
+Thank you. Fixed. –  lserni Mar 8 '14 at 20:46
+add a comment
+up vote
+9
+down vote
+Here, check out this function:
+
+function seo_friendly_url($string){
+    $string = str_replace(array('[\', \']'), '', $string);
+    $string = preg_replace('/\[.*\]/U', '', $string);
+    $string = preg_replace('/&(amp;)?#?[a-z0-9]+;/i', '-', $string);
+    $string = htmlentities($string, ENT_COMPAT, 'utf-8');
+    $string = preg_replace('/&([a-z])(acute|uml|circ|grave|ring|cedil|slash|tilde|caron|lig|quot|rsquo);/i', '\\1', $string );
+    $string = preg_replace(array('/[^a-z0-9]/i', '/[-]+/') , '-', $string);
+    return strtolower(trim($string, '-'));
+}
+shareimprove this answer
+answered Jan 1 '13 at 21:35
+
+Jeffrey
+653311
+  	 	
+ill try this too! –  user115422 Jan 1 '13 at 21:36
+  	 	
+Entered comment in wrong place. –  dmuk Mar 8 '14 at 18:26 
+add a comment
+Not the answer you're looking for?	Browse other questions tagged php regex url slug or ask your own question.
+
+asked
+
+2 years ago
+
+viewed
+
+146488 times
+
+active
+
+2 months ago
+
+Looking for a job?
+Tech Analyst / Writer for Travel Tech Startup - NYC
+SIMPLENIGHT
+New York, NY
+phpapi
+Senior PHP Developer
+ADVFN
+Newport Beach, CA / remote
+phpjavascript
+Front End / JavaScript / WordPress GURU
+Wide Eye Creative
+Washington, DC / remote / relocation
+phpcss
+Web Developer-Apparel & Fashion Industry
+IguanaMed
+Chicago, IL
+phpmysql
+Get the weekly newsletter!
+
+Top questions and answers
+Important announcements
+Unanswered questions
+
+see an example newsletter
+
+Linked
+
+8 Regular Expression Sanitize (PHP)
+1 How to put minus after each word?
+1 How can I restrict some special characters only in PHP?
+0 ZF2 modify URL formating
+0 Display download button after user details are submitted via web form
+1 Selecting between quotes (") in SQL Server 2012
+0 How can i remove symbol from the title?
+0 How to delete wrong symbols and wrong length strings from string array?
+-1 how to remove special characters and url , link from a string in php
+1 How to strip tabs etc from outside of " (quotes) in php?
+see more linked questions…
+Related
+
+169 How does Stack Overflow generate its SEO-friendly URLs?
+2708 How can I get query string values in JavaScript?
+3 Creating Slugs from Titles?
+2 How to write regular expression to match only numbers, letters and dashes?
+26 Regex to remove all special characters from string?
+3 Manipulating a String: Removing special characters - Change all accented letters to non accented
+16 jQuery remove special characters from string and more
+3 Improve converting string to readable urls
+0 Javascript remove special characters from beginning and end of string
+0 How do you make a better seo friendly URL when there is UTF-8 characters and many space in between?
+Hot Network Questions
+
+Can a bird, previously at earth potential, get electrocuted by landing on a powerline at high-enough voltage due to the initial "equalization charge"?
+What did the paper money of the Ilkhanate look like?
+Damage type of quarterstaff thrusts
+Confectionery or confectionary when referring to a group of sweets
+IIs there a site that shows the current GPS position of active cruise ships?
+Why did Jango Fett have a son via cloning instead of through natural reproductive processes?
+Displaying states of machines – Overview site
+Which adjectives can be used to say to people they dressed nicely in a formal way?
+What is the purpose of hash (#) as a special character sign
+How to find a hole in a bicycle tire tube quickly
+Did the biblical apostle James visit Ireland?
+Additive combinatorics applications in algorithm design
+How can Windows dump the complete RAM in the hibernation file so fast?
+BitLocker Drive Encryption NOT secure from drive mapping on network
+Making Part of the Planet Completely Inaccessible
+Encrypt-then-MAC: Do I need to authenticate the IV?
+Assistance in understand IUPAC name for tetrahedrane
+How to explain brackets to young students
+Why is E.coli used as a model?
+Why does strace return so many execve calls with ENOENT return code?
+Is there any ethical issue which prevents me from paying high quality authors monetary compensation, to agree to write papers with me?
+How to add double line border to a page?
+Implement a Shape abstract class
+Can water falling from a tap follow a spiral path?
+tour help blog chat data legal privacy policy work here advertising info mobile contact us feedback
+TECHNOLOGY	LIFE / ARTS	CULTURE / RECREATION	SCIENCE	OTHER
+Stack Overflow
+Server Fault
+Super User
+Web Applications
+Ask Ubuntu
+Webmasters
+Game Development
+TeX - LaTeX
+Programmers
+Unix & Linux
+Ask Different (Apple)
+WordPress Development
+Geographic Information Systems
+Electrical Engineering
+Android Enthusiasts
+Information Security
+Database Administrators
+Drupal Answers
+SharePoint
+User Experience
+Mathematica
+Salesforce
+more (14)
+Photography
+Science Fiction & Fantasy
+Graphic Design
+Seasoned Advice (cooking)
+Home Improvement
+Personal Finance & Money
+Academia
+more (10)
+English Language & Usage
+Skeptics
+Mi Yodeya (Judaism)
+Travel
+Christianity
+Arqade (gaming)
+Bicycles
+Role-playing Games
+more (21)
+Mathematics
+Cross Validated (stats)
+Theoretical Computer Science
+Physics
+MathOverflow
+more (7)
+Stack Apps
+Meta Stack Exchange
+Area 51
+Stack Overflow Careers
+site design / logo © 2015 stack exchange inc; user contributions licensed under cc by-sa 3.0 with attribution required
+rev 2015.3.12.2382
+
+Stack Exchange sign up log in tour help  stack overflow careers  
+
+
+Stack Overflow
+Questions
+ 
+Tags
+ 
+Users
+ 
+Badges
+ 
+Unanswered
+ 
+Ask Question
+Take the 2-minute tour × Stack Overflow is a question and answer site for professional and enthusiast programmers. It's 100% free, no registration required.
+Remove all special characters from a string [duplicate]
+
+
+up vote
+43
+down vote
+favorite
+18
+Possible Duplicate:
+Regular Expression Sanitize (PHP)
+I am facing an issue with URLs, I want to be able to convert titles that could contain anything and have them stripped of all special characters so they only have letters and numbers and of course I would like to replace spaces with hyphens.
+
+How would this be done? I've heard a lot about regular expressions (regex) being used...
+
+php regex url slug
+shareimprove this question
+edited Jan 1 '13 at 21:51
+
+hakre
+112k18140294	
+asked Jan 1 '13 at 21:31
+
+user115422
+81641224
+marked as duplicate by hakre, PeeHaa, tereško, Kate Gregory, Brooks Moses Jan 1 '13 at 23:53
+
+This question has been asked before and already has an answer. If those answers do not fully address your question, please ask a new question.
+
+1	 	
+Which question is this a duplicate of? –  starbeamrainbowlabs Jun 25 '14 at 9:47
+add a comment
+3 Answers
+activeoldestvotes
+up vote
+162
+down vote
+accepted
+Easy peasy:
+
+function clean($string) {
+   $string = str_replace(' ', '-', $string); // Replaces all spaces with hyphens.
+
+   return preg_replace('/[^A-Za-z0-9\-]/', '', $string); // Removes special chars.
+}
+Usage:
+
+echo clean('a|"bc!@£de^&$f g');
+Will output: abcdef-g
+
+Edit:
+
+Hey, just a quick question, how can I prevent multiple hyphens from being next to each other? and have them replaced with just 1? Thanks in advance!
+function clean($string) {
+   $string = str_replace(' ', '-', $string); // Replaces all spaces with hyphens.
+   $string = preg_replace('/[^A-Za-z0-9\-]/', '', $string); // Removes special chars.
+
+   return preg_replace('/-+/', '-', $string); // Replaces multiple hyphens with single one.
+}
+shareimprove this answer
+edited Jun 11 '14 at 23:58
+
+answered Jan 1 '13 at 21:33
+
+Terry Harvey
+2,4051614
+1	 	
+thanks, let me give it a shot! –  user115422 Jan 1 '13 at 21:34
+  	 	
+He was specifically asking for spaces to be replaced with hyphens... –  Jeffrey Jan 1 '13 at 21:36 
+  	 	
+@Artaex Media Sorry, missed that part! –  Terry Harvey Jan 1 '13 at 21:36
+1	 	
+ill mark this as answer, thanks a lot! –  user115422 Jan 1 '13 at 21:38
+1	 	
+PERFECT! thanks a million! –  user115422 Jan 1 '13 at 21:59
+show 14 more comments
+
+up vote
+20
+down vote
+Update
+
+The solution below has a "SEO friendlier" version:
+Suupaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbccccccccccccccccccccccccccccccccccccccccccccccccccccccccbbbbbbbbbbbbbbbbbbbbbbbbbbaaaaaaaaaaaaaaaaaaapuus
+function hyphenize($string) {
+    $dict = array(
+        "I'm"      => "I am",
+        "thier"    => "their",
+    );
+    return strtolower(
+        preg_replace(
+          array( '#[\\s-]+#', '#[^A-Za-z0-9\. -]+#' ),
+          array( '-', '' ),
+          // the full cleanString() can be download from http://www.unexpectedit.com/php/php-clean-string-of-utf8-chars-convert-to-similar-ascii-char
+          cleanString(
+              str_replace( // preg_replace to support more complicated replacements
+                  array_keys($dict),
+                  array_values($dict),
+                  urldecode($string)
+              )
+          )
+        )
+    );
+}
+
+function cleanString($text) {
+    $utf8 = array(
+        '/[áàâãªä]/u'   =>   'a',
+        '/[ÁÀÂÃÄ]/u'    =>   'A',
+        '/[ÍÌÎÏ]/u'     =>   'I',
+        '/[íìîï]/u'     =>   'i',
+        '/[éèêë]/u'     =>   'e',
+        '/[ÉÈÊË]/u'     =>   'E',
+        '/[óòôõºö]/u'   =>   'o',
+        '/[ÓÒÔÕÖ]/u'    =>   'O',
+        '/[úùûü]/u'     =>   'u',
+        '/[ÚÙÛÜ]/u'     =>   'U',
+        '/ç/'           =>   'c',
+        '/Ç/'           =>   'C',
+        '/ñ/'           =>   'n',
+        '/Ñ/'           =>   'N',
+        '/–/'           =>   '-', // UTF-8 hyphen to "normal" hyphen
+        '/[’‘‹›‚]/u'    =>   ' ', // Literally a single quote
+        '/[“”«»„]/u'    =>   ' ', // Double quote
+        '/ /'           =>   ' ', // nonbreaking space (equiv. to 0x160)
+    );
+    return preg_replace(array_keys($utf8), array_values($utf8), $text);
+}
+The rationale for the above functions (which I find way inefficient - the one below is better) is that a service that shall not be named apparently ran spelling checks and keyword recognition on the URLs.
+
+After losing a long time on a customer's paranoias, I found out they were not imagining things after all -- their SEO experts [I am definitely not one] reported that, say, converting "Viaggi Economy Perù" to viaggi-economy-peru "behaved better" than viaggi-economy-per (the previous "cleaning" removed UTF8 characters; Bogotà became bogot, Medellìn became medelln and so on).
+
+There were also some common misspellings that seemed to influence the results, and the only explanation that makes sense to me is that our URL are being unpacked, the words singled out, and used to drive God knows what ranking algorithms. And those algorithms apparently have been fed with UTF8-cleaned strings, so that "Perù" becomes "Peru" instead of "Per".
+
+In order to both keep UTF8 characters and replace some misspellings, the faster function below became the more accurate (?) function above. $dict needs to be hand tailored, of course.
+
+Previous answer
+
+A simple approach:
+
+// Remove all characters except A-Z, a-z, 0-9, dots, hyphens and spaces
+// Note that the hyphen must go last not to be confused with a range (A-Z)
+// and the dot, being special, is escaped with \
+$str = preg_replace('/[^A-Za-z0-9\. -]/', '', $str);
+
+// Replace sequences of spaces with hyphen
+$str = preg_replace('/  */', '-', $str);
+
+// The above means "a space, followed by a space repeated zero or more times"
+// (should be equivalent to / +/)
+
+// You may also want to try this alternative:
+$str = preg_replace('/\\s+/', '-', $str);
+
+// where \s+ means "zero or more whitespaces" (a space is not necessarily the
+// same as a whitespace) just to be sure and include everything
+Note that you might have to first urldecode() the URL, since %20 and + both are actually spaces - I mean, if you have "Never%20gonna%20give%20you%20up" you want it to become Never-gonna-give-you-up, not Never20gonna20give20you20up . You might not need it, but I thought I'd mention the possibility.
+
+So the finished function along with test cases:
+
+function hyphenize($string) {
+    return 
+    ## strtolower(
+          preg_replace(
+            array('#[\\s-]+#', '#[^A-Za-z0-9\. -]+#'),
+            array('-', ''),
+        ##     cleanString(
+              urldecode($string)
+        ##     )
+        )
+    ## )
+    ;
+}
+
+print implode("\n", array_map(
+    function($s) {
+            return $s . ' becomes ' . hyphenize($s);
+    },
+    array(
+    'Never%20gonna%20give%20you%20up',
+    "I'm not the man I was",
+    "'Légeresse', dit sa majesté",
+    )));
+
+
+Never%20gonna%20give%20you%20up    becomes  never-gonna-give-you-up
+I'm not the man I was              becomes  im-not-the-man-I-was
+'Légeresse', dit sa majesté        becomes  legeresse-dit-sa-majeste
+To handle UTF-8 I used a cleanString implementation found here. It could be simplified and wrapped inside the function here for performance.
+
+The function above also implements converting to lowercase - but that's a taste. The code to do so has been commented out.
+
+shareimprove this answer
+edited Jan 3 at 11:09
+
+answered Jan 1 '13 at 21:36
+
+lserni
+21.3k51540
+  	 	
+thanks, i'll save this too, i've upvoted it but sorry, the other guy got there first :( –  user115422 Jan 1 '13 at 21:47
+  	 	
+No problem :-), and he also did wrap the code in a function, which I did not. –  lserni Jan 1 '13 at 22:37
+1	 	
+You are missing a closing bracket in first block of code --> $str = preg_replace('/[^A-Za-z0-9\. -]/', '', $str); –  dmuk Mar 8 '14 at 18:28
+  	 	
+Thank you. Fixed. –  lserni Mar 8 '14 at 20:46
+add a comment
+up vote
+9
+down vote
+Here, check out this function:
+
+function seo_friendly_url($string){
+    $string = str_replace(array('[\', \']'), '', $string);
+    $string = preg_replace('/\[.*\]/U', '', $string);
+    $string = preg_replace('/&(amp;)?#?[a-z0-9]+;/i', '-', $string);
+    $string = htmlentities($string, ENT_COMPAT, 'utf-8');
+    $string = preg_replace('/&([a-z])(acute|uml|circ|grave|ring|cedil|slash|tilde|caron|lig|quot|rsquo);/i', '\\1', $string );
+    $string = preg_replace(array('/[^a-z0-9]/i', '/[-]+/') , '-', $string);
+    return strtolower(trim($string, '-'));
+}
+shareimprove this answer
+answered Jan 1 '13 at 21:35
+
+Jeffrey
+653311
+  	 	
+ill try this too! –  user115422 Jan 1 '13 at 21:36
+  	 	
+Entered comment in wrong place. –  dmuk Mar 8 '14 at 18:26 
+add a comment
+Not the answer you're looking for?	Browse other questions tagged php regex url slug or ask your own question.
+
+asked
+
+2 years ago
+
+viewed
+
+146488 times
+
+active
+
+2 months ago
+
+Looking for a job?
+Tech Analyst / Writer for Travel Tech Startup - NYC
+SIMPLENIGHT
+New York, NY
+phpapi
+Senior PHP Developer
+ADVFN
+Newport Beach, CA / remote
+phpjavascript
+Front End / JavaScript / WordPress GURU
+Wide Eye Creative
+Washington, DC / remote / relocation
+phpcss
+Web Developer-Apparel & Fashion Industry
+IguanaMed
+Chicago, IL
+phpmysql
+Get the weekly newsletter!
+
+Top questions and answers
+Important announcements
+Unanswered questions
+
+see an example newsletter
+
+Linked
+
+8 Regular Expression Sanitize (PHP)
+1 How to put minus after each word?
+1 How can I restrict some special characters only in PHP?
+0 ZF2 modify URL formating
+0 Display download button after user details are submitted via web form
+1 Selecting between quotes (") in SQL Server 2012
+0 How can i remove symbol from the title?
+0 How to delete wrong symbols and wrong length strings from string array?
+-1 how to remove special characters and url , link from a string in php
+1 How to strip tabs etc from outside of " (quotes) in php?
+see more linked questions…
+Related
+
+169 How does Stack Overflow generate its SEO-friendly URLs?
+2708 How can I get query string values in JavaScript?
+3 Creating Slugs from Titles?
+2 How to write regular expression to match only numbers, letters and dashes?
+26 Regex to remove all special characters from string?
+3 Manipulating a String: Removing special characters - Change all accented letters to non accented
+16 jQuery remove special characters from string and more
+3 Improve converting string to readable urls
+0 Javascript remove special characters from beginning and end of string
+0 How do you make a better seo friendly URL when there is UTF-8 characters and many space in between?
+Hot Network Questions
+
+Can a bird, previously at earth potential, get electrocuted by landing on a powerline at high-enough voltage due to the initial "equalization charge"?
+What did the paper money of the Ilkhanate look like?
+Damage type of quarterstaff thrusts
+Confectionery or confectionary when referring to a group of sweets
+IIs there a site that shows the current GPS position of active cruise ships?
+Why did Jango Fett have a son via cloning instead of through natural reproductive processes?
+Displaying states of machines – Overview site
+Which adjectives can be used to say to people they dressed nicely in a formal way?
+What is the purpose of hash (#) as a special character sign
+How to find a hole in a bicycle tire tube quickly
+Did the biblical apostle James visit Ireland?
+Additive combinatorics applications in algorithm design
+How can Windows dump the complete RAM in the hibernation file so fast?
+BitLocker Drive Encryption NOT secure from drive mapping on network
+Making Part of the Planet Completely Inaccessible
+Encrypt-then-MAC: Do I need to authenticate the IV?
+Assistance in understand IUPAC name for tetrahedrane
+How to explain brackets to young students
+Why is E.coli used as a model?
+Why does strace return so many execve calls with ENOENT return code?
+Is there any ethical issue which prevents me from paying high quality authors monetary compensation, to agree to write papers with me?
+How to add double line border to a page?
+Implement a Shape abstract class
+Can water falling from a tap follow a spiral path?
+tour help blog chat data legal privacy policy work here advertising info mobile contact us feedback
+TECHNOLOGY	LIFE / ARTS	CULTURE / RECREATION	SCIENCE	OTHER
+Stack Overflow
+Server Fault
+Super User
+Web Applications
+Ask Ubuntu
+Webmasters
+Game Development
+TeX - LaTeX
+Programmers
+Unix & Linux
+Ask Different (Apple)
+WordPress Development
+Geographic Information Systems
+Electrical Engineering
+Android Enthusiasts
+Information Security
+Database Administrators
+Drupal Answers
+SharePoint
+User Experience
+Mathematica
+Salesforce
+more (14)
+Photography
+Science Fiction & Fantasy
+Graphic Design
+Seasoned Advice (cooking)
+Home Improvement
+Personal Finance & Money
+Academia
+more (10)
+English Language & Usage
+Skeptics
+Mi Yodeya (Judaism)
+Travel
+Christianity
+Arqade (gaming)
+Bicycles
+Role-playing Games
+more (21)
+Mathematics
+Cross Validated (stats)
+Theoretical Computer Science
+Physics
+MathOverflow
+more (7)
+Stack Apps
+Meta Stack Exchange
+Area 51
+Stack Overflow Careers
+site design / logo © 2015 stack exchange inc; user contributions licensed under cc by-sa 3.0 with attribution required
+rev 2015.3.12.2382

@@ -1,0 +1,40 @@
+<div class="row dataGrid">
+	<div class="col-lg-12">
+		<div class="panel panel-default">
+			<div class="panel-body">
+				<?php if ($this->dataGrid()->dataSource->count()) : ?>
+			        <?php foreach ($this->dataGrid()->dataSource as $_row): ?>
+			        <?php
+			        	// Get columns 
+						$columns = $this->dataGrid()->columns;
+						
+						// Prepare data source for the columns
+						$_row = is_callable(array($_row, 'toArray')) ? $_row->toArray() : (array) $_row;
+			            $columns->setData(is_callable(array($_row, 'toArray')) ? $_row->toArray() : (array) $_row);
+	                ?>
+	                <div class="col-md-2">
+						<div class="thumbnail">
+							<?php if (in_array($columns['media_type']->getBody()->getValue(), $this->dataGrid()->view->imageType)) : ?>
+							<img class="img-responsive" alt="<?php echo $columns['media_url']->getBody()->getValue(); ?>" src="<?php echo $this->baseUrl(basename(LUMIA_UPLOAD_DIR) . '/thumb/' . $columns['media_url']->getBody()->getValue()); ?>" />
+							<?php else : ?>
+							<img class="img-responsive" alt="<?php echo $columns['media_url']->getBody()->getValue(); ?>" src="<?php echo $this->baseUrl('/static/jquery-uploadify/no_media.png'); ?>" />
+							<?php endif; ?>
+							<div class="caption">
+								<div class="pull-left">
+									<input type="checkbox" id="wysiwyg-<?php echo $columns['media_id']->getBody()->getId(); ?>-<?php echo $columns['media_id']->getBody()->getValue(); ?>" value="<?php echo $this->serverUrl() . $this->baseUrl(basename(LUMIA_UPLOAD_DIR) . '/uploadify/' . $columns['media_url']->getBody()->getValue(), true); ?>" />
+								</div>
+								<div class="pull-right">
+									<a href="javascript:void(0);" onclick="LumiaJS.admin.media.wysiwyg.remove(<?php echo (int) $columns['media_id']->getBody()->getValue(); ?>);" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-trash"></i></a>
+								</div>
+								<div class="clearfix"></div>
+							</div>
+						</div>
+					</div>
+	                <?php endforeach; ?>
+		        <?php else : ?>
+		    		<div class="text-center"><?php echo $this->translate('DataTable:@No record found'); ?></div>
+		    	<?php endif; ?>
+			</div>
+		</div>
+	</div>
+</div>

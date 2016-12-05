@@ -1,0 +1,31 @@
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h4><?php echo $this->translate('QuizForm:@Content of question'); ?></h4>
+	</div>
+	
+	<div class="panel-body question">
+		<p><?php echo $this->QUESTION['DESC']; ?></p>
+	</div>
+	
+	<input type="hidden" name="quiz-question" value="0" />
+
+</div>
+
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h4><?php echo $this->translate('QuizForm:@Answer list'); ?></h4>
+	</div>
+	
+	<ul class="list-group">
+	    <?php foreach ($this->ANSWERS as $answer) : ?>
+	    <li class="list-group-item">
+			<div class="checkbox">
+				<label class="checkbox-inline">
+	    			<input type="checkbox" name="quiz-answer[]" value="<?php echo $answer['ID']; ?>" <?php if (in_array($answer['ID'], $this->ANSWERS_MARKED)) : ?> checked="checked" <?php endif; ?> /> 
+	    		   	<span class="answer"><?php echo $answer['DESC']; ?></span>
+				</label>
+			</div>
+		</li>
+	    <?php endforeach; ?>
+	</ul>
+</div>

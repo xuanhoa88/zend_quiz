@@ -1,0 +1,17 @@
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header"><?php echo $this->translate('PageHeader:@Rearrange navbar');?></h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+    		<div class="panel-body"><?php echo $this->form->render(); ?></div>
+    		<div class="panel-footer">
+				<?php echo $this->formButton('btnSave', $this->translate('Form:@Button save'), array('class' => 'btn btn-lg btn-primary')); ?>
+				<p class="btn btn-lg btnLoading hide"><i class="fa fa-refresh fa-spin"></i> <?php echo $this->translate('DataTable:@Please wait a moment'); ?></p>
+			</div>
+    	</div>
+    </div>
+</div>

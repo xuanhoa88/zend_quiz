@@ -1,0 +1,14 @@
+# Set environment
+SetEnv APPLICATION_ENV development
+
+# Rewrite rules
+RewriteEngine On
+
+# force URLs to end with a /
+
+# Zend Framework URLs
+RewriteCond %{REQUEST_FILENAME} -s [OR]
+RewriteCond %{REQUEST_FILENAME} -l [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^.*$ - [NC,L]
+RewriteRule ^.*$ index.php [NC,L]

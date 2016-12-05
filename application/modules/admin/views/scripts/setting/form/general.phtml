@@ -1,0 +1,91 @@
+<form name="<?php echo $this->element->getName(); ?>" action="<?php echo $this->element->getAction(); ?>" method="<?php echo $this->element->getMethod(); ?>">
+	<?php echo $this->element->getElement('role_id'); ?>
+	
+	<div class="row">
+		
+		<div class="col-lg-6">
+		
+		    <div class="form-group<?php echo ($this->element->getElement('site_title')->hasErrors() ? ' has-error' : ''); ?>">
+				<label class="control-label"><?php echo $this->element->getElement('site_title')->getLabel(); ?></label> 
+				<div class="input-group">
+					<span class="input-group-addon"><i class="fa fa-caret-right icon-mandatory"></i></span>
+					<?php echo $this->element->getElement('site_title')->setAttribs(array('class' => 'form-control')); ?>
+				</div>
+				<?php echo $this->formErrors($this->element->getElement('site_title')->getMessages()); ?>
+			</div>
+			
+		</div>
+		
+		<div class="col-lg-6">
+			
+			<div class="form-group<?php echo ($this->element->getElement('email_address')->hasErrors() ? ' has-error' : ''); ?>">	 
+				<label class="control-label"><?php echo $this->element->getElement('email_address')->getLabel(); ?></label> 
+				<div class="input-group">
+					<span class="input-group-addon"><i class="fa fa-caret-right icon-mandatory"></i></span>
+					<?php echo $this->element->getElement('email_address')->setAttribs(array('class' => 'form-control')); ?>
+				</div>
+				<?php echo $this->formErrors($this->element->getElement('email_address')->getMessages()); ?>
+			</div>
+		</div>
+		
+		<div class="col-lg-12">	
+			<div class="form-group<?php echo ($this->element->getElement('users_can_register')->hasErrors() ? ' has-error' : ''); ?>">	
+				<label class="control-label checkbox-inline">
+					<?php echo $this->element->getElement('users_can_register'); ?>
+					<?php echo $this->element->getElement('users_can_register')->getAttrib('placeholder'); ?>
+				</label>
+				<?php echo $this->formErrors($this->element->getElement('users_can_register')->getMessages()); ?>
+			</div>
+				
+		</div>
+		
+		<div class="col-lg-6">	
+			<div class="form-group<?php echo ($this->element->getElement('timezone')->hasErrors() ? ' has-error' : ''); ?>">	
+				<label class="control-label"><?php echo $this->element->getElement('timezone')->getLabel(); ?></label>
+				<div class="input-group">
+				<span class="input-group-addon"><i class="fa fa-caret-right icon-mandatory"></i></span>
+					<?php echo $this->element->getElement('timezone')->setAttribs(array('class' => 'form-control')); ?>
+				</div>
+				<?php echo $this->formErrors($this->element->getElement('timezone')->getMessages()); ?>
+			</div>
+		</div>
+		
+		<div class="col-lg-6">	
+			<div class="form-group<?php echo ($this->element->getElement('start_of_week')->hasErrors() ? ' has-error' : ''); ?>">	
+				<label class="control-label"><?php echo $this->element->getElement('start_of_week')->getLabel(); ?></label>
+				<div class="input-group">
+				<span class="input-group-addon"><i class="fa fa-caret-right icon-mandatory"></i></span>
+					<?php echo $this->element->getElement('start_of_week')->setAttribs(array('class' => 'form-control')); ?>
+				</div>
+				<?php echo $this->formErrors($this->element->getElement('start_of_week')->getMessages()); ?>
+			</div>
+		</div>
+		
+		<div class="col-lg-6">	
+			<div class="form-group<?php echo ($this->element->getElement('date_format')->hasErrors() ? ' has-error' : ''); ?>">	
+				<label class="control-label"><?php echo $this->element->getElement('date_format')->getLabel(); ?></label>
+				<div class="input-group">
+					<?php echo $this->element->getElement('date_format')->setOptions(array('label_class' => array('class' => 'radio-inline control-label'))); ?>
+				</div>
+				<?php echo $this->formErrors($this->element->getElement('date_format')->getMessages()); ?>
+			</div>
+		</div>
+		
+		<div class="col-lg-6">	
+			<div class="form-group<?php echo ($this->element->getElement('time_format')->hasErrors() ? ' has-error' : ''); ?>">	
+				<label class="control-label"><?php echo $this->element->getElement('time_format')->getLabel(); ?></label>
+				<div class="input-group">
+					<?php echo $this->element->getElement('time_format')->setOptions(array('label_class' => array('class' => 'radio-inline control-label'))); ?>
+				</div>
+				<?php echo $this->formErrors($this->element->getElement('time_format')->getMessages()); ?>
+			</div>
+		</div>
+		
+	</div>
+
+	<div class="btn-toolbar">
+		<?php echo $this->element->getElement('btnSave')->setAttribs(array('class' => 'btn btn-lg btn-primary')); ?>
+		<?php echo $this->element->getElement('btnReset')->setAttribs(array('class' => 'btn btn-lg btn-danger')); ?>
+	</div>
+	
+</form>

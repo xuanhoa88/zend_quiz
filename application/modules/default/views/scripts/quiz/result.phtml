@@ -1,0 +1,93 @@
+<div class="container">
+	<div class="page-header page-header-custom">
+		<h2><?php echo $this->translate('QuizForm:@Exam result'); ?></h2>
+	</div>
+</div>
+
+<div class="container">
+	<div class="page-body page-body-default" id="container-exam">
+	
+    	<div class="row">
+    		
+    		<div class="col-lg-4 col-sm-4">
+	            <div class="panel panel-default">
+	                <div class="panel-heading"><h4><?php echo $this->translate('QuizForm:@Exam information'); ?></h4></div>
+	                <ul class="list-group list-group-flush">
+	        			<li class="list-group-item">
+	        				<?php echo $this->translate('QuizForm:@Student name'); ?>
+	        				<span class="pull-right badge badge-primary"><?php echo $this->studentSession()->student_name; ?></span>
+	        			</li>
+	        			<li class="list-group-item">
+	        				<?php echo $this->translate('QuizForm:@Student code'); ?>
+	        				<span class="pull-right badge badge-primary"><?php echo $this->studentSession()->student_code; ?></span>
+	        			</li>
+	        			<li class="list-group-item">
+	        				<?php echo $this->translate('QuizForm:@Class name'); ?>
+        				    <span class="pull-right badge badge-primary"><?php echo $this->studentSession()->class_name; ?></span>
+	        			</li>
+	                    <li class="list-group-item">
+	                    	<?php echo $this->translate('QuizForm:@Subject'); ?> 
+	        				<span class="pull-right badge badge-primary"><?php echo $this->examManagementRow->subject_name; ?></span>
+	        			</li>
+	        			<li class="list-group-item">
+	        				<?php echo $this->translate('QuizForm:@Department name'); ?>
+        				    <span class="pull-right badge badge-primary"><?php echo $this->examManagementRow->department_name; ?></span>
+	        			</li>
+	                    <li class="list-group-item">
+	                        <?php echo $this->translate('QuizForm:@Involved time'); ?>
+	                        <span class="pull-right badge badge-primary"><?php echo $this->examManagementRow->exam_student_involved_time; ?></span>
+	                    </li>
+	                    <li class="list-group-item">
+	                        <?php echo $this->translate('QuizForm:@Time to completion'); ?>
+	                        <span class="pull-right badge badge-primary"><?php echo $this->examManagementRow->exam_student_end_time; ?></span>
+	                    </li>
+	                    <li class="list-group-item">
+	                        <?php echo $this->translate('QuizForm:@Time to spent'); ?>
+	                        <span class="pull-right badge badge-primary"><?php echo $this->translate('QuizForm:@%d minute(s) %d second(s)', $this->spentTime); ?></span>
+	                    </li>
+	                </ul>
+	            </div>
+	        </div> 
+    		
+    		<div class="col-lg-8 col-sm-8">
+    		
+	    		<div class="row">
+	    		
+			    	<div class="col-lg-12">
+			    	
+			    		<div class="panel panel-default">
+							<div class="panel-heading clearfix">
+								<h4 class="pull-left"><?php echo $this->translate('QuizForm:@Exam code'); ?></h4>
+								<button type="button" class="btn btn-info btn-lg pull-right"><?php echo $this->examManagementRow->exam_code; ?></button>
+							</div>
+							
+							<div class="panel-body question">
+								<p><?php echo $this->translate('QuizForm:@You have completed %s quetions', '<span class="label label-danger">' . count($this->markedQuestions) . '/' . count($this->totalQuestions) . '</span>'); ?></p>
+								<p><?php echo $this->translate('QuizForm:@Your score has been achieved is %s', '<span class="label label-danger">' . number_format((count($this->correctlyQuestions) / count($this->totalQuestions)) * 100, 2) . '%</span>'); ?></p>
+							</div>
+							
+						<?php if ($this->totalQuestions) : ?>
+							<div class="panel-footer">
+				                <?php
+				                	$j = 0; 
+				                	foreach ($this->totalQuestions as $questionId => $isCompleted) : 
+				                ?>
+				                	<button class="btn btn-lg <?php if ($isCompleted) : ?>btn-primary<?php else : ?>btn-default<?php endif; ?>" type="button"><?php echo $this->translate('QuizForm:@question no. %d', ++$j); ?></button>
+				                <?php endforeach; ?>
+							</div>
+						<?php endif; ?>
+							
+						</div>
+						
+			    	</div>
+			    	
+			    	<div class="clearfix"></div>
+			    	
+		    	</div>
+		    	
+	    	</div>
+	    	
+    	</div>
+    	
+    </div>	
+</div>

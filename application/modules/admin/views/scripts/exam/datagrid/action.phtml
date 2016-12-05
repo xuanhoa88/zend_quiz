@@ -1,0 +1,24 @@
+<div class="text-center">
+	<div class="btn-group">
+		<!-- Edit -->
+		<a href="<?php echo $this->escape($this->baseUrl('admin/exam/edit/id/' . $this->exam_id)); ?>" class="btn btn-default btn-sm"><i class="fa fa-edit fa-fw"></i> <?php echo $this->translate('ListView:@Edit'); ?></a>
+		<!-- Edit -->
+		
+		<!-- Delete -->
+		<a href="javascript:void(0);" onclick="LumiaJS.dataTable.get('<?php echo $this->escape($this->dataGrid()->name); ?>').submitAction('<?php echo $this->escape($this->baseUrl('admin/exam/delete/id/' . $this->exam_id)); ?>');" class="btn btn-danger btn-sm"><i class="fa fa-trash-o fa-fw"></i> <?php echo $this->translate('ListView:@Delete'); ?></a>
+		<!-- Delete -->
+	</div>
+	
+	<!-- Printing -->
+	<div class="btn-group" role="group">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <?php echo $this->translate('ExamListView:@Printing'); ?>
+          <i class="fa fa-print fa-fw"></i>
+        </button>
+        <ul class="dropdown-menu">
+          <li><a href="javascript:void(0);" onclick="LumiaJS.admin.exam.printingExam('<?php echo $this->escape($this->exam_id); ?>');"><?php echo $this->translate('ExamListView:@Printing exam'); ?></a></li>
+          <li><a href="javascript:void(0);" onclick="LumiaJS.admin.exam.printingParticipant('<?php echo $this->escape($this->exam_id); ?>');"><?php echo $this->translate('ExamListView:@Printing participant'); ?></a></li>
+        </ul>
+  	</div>
+	<!-- Printing -->
+</div>

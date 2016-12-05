@@ -1,0 +1,7 @@
+<?php 
+	if (!empty($this->element->getView()->studentRows)) : 
+		foreach ($this->element->getView()->studentRows as $studentRow) :
+			echo $this->element->getSubForm('dependencyStudents')->getSubForm($studentRow->student_id)->getElement($studentRow->student_id);
+		endforeach;
+	endif; 
+?>

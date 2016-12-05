@@ -1,0 +1,26 @@
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h4><?php echo $this->translate('QuizForm:@Content of question'); ?></h4>
+	</div>
+	
+	<div class="panel-body question">
+		<p><?php echo $this->QUESTION['DESC']; ?></p>
+	</div>
+	
+	<ul class="list-group">
+	    <?php foreach ($this->ANSWERS as $answer) : ?>
+	    <li class="list-group-item">
+			<div class="<?php echo ($this->MULTI_CHOICE ? 'checkbox' : 'radio'); ?>">
+				<label>
+	    		<?php if ($this->MULTI_CHOICE) : ?> 
+	    			<input type="checkbox" name="quiz-answer[]" value="<?php echo $answer['ID']; ?>" <?php if (in_array($answer['ID'], $this->ANSWERS_MARKED)) : ?> checked="checked" <?php endif; ?> /> 
+	    		<?php else : ?>
+	    			<input type="radio" name="quiz-answer[]" value="<?php echo $answer['ID']; ?>" <?php if (in_array($answer['ID'], $this->ANSWERS_MARKED)) : ?> checked="checked" <?php endif; ?> />
+	    		<?php endif; ?>
+	    		   <span class="answer"><?php echo $answer['DESC']; ?></span>
+				</label>
+			</div>
+		</li>
+	    <?php endforeach; ?>
+	</ul>
+</div>

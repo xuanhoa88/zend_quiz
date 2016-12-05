@@ -1,0 +1,77 @@
+<div class="container">
+
+	<div class="row">
+        <div class="col-xs-12">
+        	<div class="col-xs-6 text-left">
+        		<div class="ministry-brand"><b><?php echo $this->dataGrid()->getView()->ministryBrand; ?></b></div>
+        		<div class="school-name"><b><?php echo $this->dataGrid()->getView()->schoolName; ?></b></div>
+        	</div>
+        	<div class="col-xs-6 text-center">
+        		<div class="national-brand"><b><?php echo $this->dataGrid()->getView()->nationalBrand; ?></b></div>
+        		<div class="national-motto"><b><?php echo $this->dataGrid()->getView()->nationalMotto; ?></b></div>
+        	</div>
+        </div>
+        
+        <div class="col-xs-12 text-center">
+        	<p class="page-header">
+        		<h4 class="text-uppercase"><?php echo $this->translate('Printing:@List of scores by subject'); ?></h4>
+        		<h3><?php echo $this->dataGrid()->getView()->subjectName; ?></h3>
+        	</p>
+        </div>
+        			
+        <!-- Table -->
+        <table class="table table-bordered">
+        	<tbody>
+        		<tr>
+        			<td class="active">
+        				<div class="col-xs-6 text-left">
+        					<p><b><?php echo $this->translate('Printing:@Start time'); ?>:</b> <?php echo $this->dataGrid()->getView()->startDate; ?></p>
+        					<p><b><?php echo $this->translate('Printing:@Execution time'); ?>:</b> <?php echo $this->dataGrid()->getView()->executionTime; ?></p>
+        				</div>
+        				<div class="col-xs-6 text-right"><b><?php echo $this->translate('Printing:@Number of students'); ?>:</b> <?php echo $this->dataGrid()->getView()->numberOfStudents; ?></div>
+        			</td>
+        		</tr>
+        	</tbody>
+        </table>
+        <!-- Table -->
+        
+        <!-- Table -->
+        <table class="table table-bordered table-hover">
+          	<!-- Table header -->
+        	<thead>
+        		<tr>
+                    <?php foreach ($this->dataGrid()->columns as $column) : ?>
+                    <th id="thead-<?php echo $column->getBody()->getId(); ?>">
+                    	<?php echo $column->getHeader(); ?>
+                    </th>
+                    <?php endforeach; ?>
+                </tr>
+        	</thead>
+        	<!-- /Table header -->
+        	
+        	<!-- Table body -->
+        	<tbody>
+        		<?php if ($this->dataGrid()->dataSource->count()) : ?>
+        	        <?php foreach ($this->dataGrid()->dataSource as $_row): ?>
+        	        <?php
+        	              	// Prepare data source for the columns
+        		        	$row = is_callable(array($_row, 'toArray')) ? $_row->toArray() : (array) $_row;
+                          	$this->dataGrid()->columns->setData(is_callable(array($_row, 'toArray')) ? $_row->toArray() : (array) $_row);
+                        ?>
+        	        <tr>
+        	          <?php foreach ($this->dataGrid()->columns as $column) : ?>
+        	          		<?php $body = clone $column->getBody(); ?>
+        	                <td<?php echo $body->attributesToHtml(); ?>><?php echo $body; ?></td>
+        	            <?php endforeach; ?>
+        	        </tr>
+        	        <?php endforeach; ?>
+        	    <?php else : ?>
+        	    	<tr><td colspan="<?php echo count($this->dataGrid()->columns); ?>" class="text-center"><?php echo $this->translate('DataTable:@No record found'); ?></td></tr>
+        	    <?php endif; ?>
+        	</tbody>
+        	<!-- /Table body -->
+        
+        </table>
+        <!-- Table -->
+     </div>
+</div>

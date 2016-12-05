@@ -1,0 +1,11 @@
+<div class="text-center">
+	<div class="btn-group">
+		<!-- Edit -->
+		<a href="<?php echo $this->escape($this->baseUrl('admin/role/edit/id/' . $this->role_id)); ?>" class="btn btn-default btn-sm"><i class="fa fa-edit fa-fw"></i> <?php echo $this->translate('ListView:@Edit'); ?></a>
+		<!-- ./Edit -->
+		
+		<!-- Delete -->
+		<a href="javascript:void(0);" onclick="LumiaJS.dataTable.get('<?php echo $this->escape($this->dataGrid()->name); ?>').submitAction('<?php echo $this->escape($this->baseUrl('admin/role/delete/id/' . $this->role_id)); ?>');" class="btn btn-danger btn-sm"><i class="fa fa-trash-o fa-fw"></i> <?php echo $this->translate('ListView:@Delete'); ?></a>
+		<!-- ./Delete -->
+	</div>
+</div>
